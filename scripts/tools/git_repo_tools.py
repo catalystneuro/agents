@@ -91,4 +91,4 @@ class CreateNWBRepoTool(Tool):
 
         except Exception as e:
             logger.error(f"Failed to create repository: {str(e)}")
-            raise
+            return f"Failed to create repository: {str(e)}"

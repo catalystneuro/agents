@@ -54,4 +54,4 @@ class NWBInspectorTool(Tool):
             return str(results)
         except Exception as e:
             logger.error(f"Failed to inspect NWB files: {str(e)}")
-            raise e
+            return f"Failed to inspect NWB files: {str(e)}"

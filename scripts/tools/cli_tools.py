@@ -117,14 +117,14 @@ class ExecuteCommandTool(Tool):
             return formatted_output
 
         except subprocess.CalledProcessError as e:
-            error_msg = f"Command failed with exit code {e.returncode}"
+            error_msg = f"execute_command failed with exit code {e.returncode}"
             if e.stdout:
                 error_msg += f"\nSTDOUT:\n{e.stdout}"
             if e.stderr:
                 error_msg += f"\nSTDERR:\n{e.stderr}"
             logger.error(error_msg)
-            raise
+            return error_msg
 
         except Exception as e:
             logger.error(f"Failed to execute command: {str(e)}")
-            raise
+            return f"execute_command failed to execute command: {str(e)}"

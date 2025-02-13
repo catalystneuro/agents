@@ -71,22 +71,23 @@ class NeuroconvSpecialistTool(Tool):
         query: str,
         context: str,
     ):
-        result = asyncio.run(
-            search(
-                query=query,
-                context=context,
-                qdrant_url="https://f068e67a-2d2b-45b8-8098-f6c354d763ec.europe-west3-0.gcp.cloud.qdrant.io:6333",
-                collection_name="neuroconv",
-                keywords=None,
-                qdrant_api_key=os.getenv("QDRANT_API_KEY"),
-                timeout=60.0,
-                return_digest_summary=self.return_digest_summary,
-                return_references=True,
-                limit=10,
-                model=self.llm_model,
+        try:
+            result = asyncio.run(
+                search(
+                    query=query,
+                    context=context,
+                    qdrant_url="https://f068e67a-2d2b-45b8-8098-f6c354d763ec.europe-west3-0.gcp.cloud.qdrant.io:6333",
+                    collection_name="neuroconv",
+                    keywords=None,
+                    qdrant_api_key=os.getenv("QDRANT_API_KEY"),
+                    timeout=60.0,
+                    return_digest_summary=self.return_digest_summary,
+                    return_references=True,
+                    limit=10,
+                    model=self.llm_model,
+                )
             )
-        )
-        return str(result)
-
-
-neuroconv_specialist_tool = NeuroconvSpecialistTool()
+            return str(result)
+        except Exception as e:
+            logger.error(f"neuroconv_specialist_tool failed with error: {str(e)}")
+            return f"neuroconv_specialist_tool failed with error: {str(e)}"

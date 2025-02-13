@@ -78,7 +78,7 @@ agent = CodeAgent(
         *extra_tools,
     ],
     model=code_model,
-    max_steps=100,
+    max_steps=40,
     planning_interval=3,
     add_base_tools=True,
 )

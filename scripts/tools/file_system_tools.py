@@ -71,7 +71,7 @@ class WriteToFileTool(FileSystemTool):
 
         except Exception as e:
             logger.error(f"Failed to write to file {path}: {str(e)}")
-            raise
+            return f"Failed to write to file {path}: {str(e)}"
 
 
 class ReadFileTool(FileSystemTool):
@@ -97,7 +97,7 @@ class ReadFileTool(FileSystemTool):
 
         except Exception as e:
             logger.error(f"Failed to read file {path}: {str(e)}")
-            raise
+            return f"Failed to read file {path}: {str(e)}"
 
 
 class ReplaceInFileTool(FileSystemTool):
@@ -133,7 +133,7 @@ class ReplaceInFileTool(FileSystemTool):
 
         except Exception as e:
             logger.error(f"Failed to replace content in file {path}: {str(e)}")
-            raise
+            return f"Failed to replace content in file {path}: {str(e)}"
 
 
 class SearchFilesTool(FileSystemTool):
@@ -189,7 +189,7 @@ class SearchFilesTool(FileSystemTool):
 
         except Exception as e:
             logger.error(f"Failed to search files in {path}: {str(e)}")
-            raise
+            return f"Failed to search files in {path}: {str(e)}"
 
 
 class ListFilesTool(FileSystemTool):
@@ -232,7 +232,35 @@ class ListFilesTool(FileSystemTool):
 
         except Exception as e:
             logger.error(f"Failed to list contents of {path}: {str(e)}")
-            raise
+            return f"Failed to list contents of {path}: {str(e)}"
+
+
+class DeleteFileTool(FileSystemTool):
+    name = "delete_file"
+    description = "Delete a file from the filesystem"
+    inputs = {
+        "path": {"type": "string", "description": "Path to the file to delete"},
+    }
+    output_type = "string"
+
+    def forward(self, path: str) -> str:
+        try:
+            path = self._validate_path_write(path)
+
+            if not os.path.exists(path):
+                raise FileNotFoundError(f"File not found: {path}")
+
+            if not os.path.isfile(path):
+                raise IsADirectoryError(f"Path is not a file: {path}")
+
+            os.remove(path)
+
+            logger.info(f"Successfully deleted file: {path}")
+            return f"Successfully deleted file: {path}"
+
+        except Exception as e:
+            logger.error(f"Failed to delete file {path}: {str(e)}")
+            return f"Failed to delete file {path}: {str(e)}"
 
 
 class DirectoryTreeTool(FileSystemTool):
@@ -265,5 +293,5 @@ class DirectoryTreeTool(FileSystemTool):
             return tree
 
         except Exception as e:
-            logger.error(f"Failed to write to file {path}: {str(e)}")
-            raise
+            logger.error(f"Failed to generate directory tree for {path}: {str(e)}")
+            return f"Failed to generate directory tree for {path}: {str(e)}"
