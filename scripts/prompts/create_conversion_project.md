@@ -1,13 +1,13 @@
 Your task is to create a project for converting neuroscience experimental data into the NWB format.
 
 General instructions:
-- the project should be in the format of a git repository and the first thing you must do is to create an NWB conversion repository using the create_nwb_repo tool.
-- Make sure you read and understand the structure of the conversion project from the template.
-- All the conversion code should be writting inside the conversion project repository folder.
+- You should only read and write files inside the "/home/agent_workspace" directory.
+- The first thing you must do is to create an NWB conversion repository using the create_nwb_repo tool, inside your working directory.
+- All the code files you produce must be saved inside this created project folder.
+- Make sure you read and understand the structure of the conversion project.
 - The conversion should be done using Neuroconv. Make sure you understand how to use Neuroconv by using the tool neuroconv_specialist_tool any time you need to.
 - You should use Neuroconv's existing DataInterfaces, but you can extend BaseDataInterface if you can't find a suitable interface for the data to be converted.
 - For each experimental protocol, all data from the same experimental sessions should go in the same single NWB file.
-- You should only read and write files inside the "/home/agent_workspace" directory.
 
 Test and validation:
 - Your goal is to convert the data from the provided experimental protocols into NWB files, using the tools you wrote in the conversion project.

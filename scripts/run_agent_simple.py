@@ -39,8 +39,9 @@ if not os.getenv("OPENROUTER_API_KEY", None):
 logger.info("Initializing models and tools...")
 
 # Models
-code_model = LiteLLMModel("openrouter/anthropic/claude-3.5-sonnet")
-# code_model = LiteLLMModel("openrouter/google/gemini-2.0-flash-001")
+# code_model = LiteLLMModel("openrouter/anthropic/claude-3.5-sonnet")
+code_model = LiteLLMModel("openrouter/google/gemini-2.0-flash-001")
+# code_model = LiteLLMModel("openrouter/google/gemini-2.0-pro-exp-02-05:free")
 
 # Tools
 neuroconv_tool = NeuroconvSpecialistTool(
@@ -77,7 +78,7 @@ agent = CodeAgent(
         *extra_tools,
     ],
     model=code_model,
-    max_steps=10,
+    max_steps=100,
     planning_interval=3,
     add_base_tools=True,
 )

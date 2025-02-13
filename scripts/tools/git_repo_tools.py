@@ -1,6 +1,6 @@
 import os
-import subprocess
 from typing import Optional
+from cookiecutter.main import cookiecutter
 from smolagents import Tool
 
 # Configure logging
@@ -62,16 +62,18 @@ class CreateNWBRepoTool(Tool):
             work_dir = self._validate_output_dir(output_dir)
 
             # Prepare cookiecutter context
-            context = {
+            extra_context = {
                 "lab": lab_name,
                 "conversion_name": conversion_name,
             }
 
-            # Create context file
-            context_path = os.path.join(work_dir, "cookiecutter.json")
-            with open(context_path, "w") as f:
-                import json
-                json.dump(context, f)
+            # Generate the project
+            cookiecutter(
+                self.TEMPLATE_URL,
+                extra_context=extra_context,
+                no_input=True,
+                output_dir=work_dir,
+            )
 
             # Log creation attempt
             logger.info(f"Creating NWB conversion repository:")
@@ -80,50 +82,12 @@ class CreateNWBRepoTool(Tool):
             logger.info(f"Conversion name: {conversion_name}")
             logger.info(f"Output directory: {work_dir}")
 
-            # Run cookiecutter
-            cmd = [
-                "cookiecutter",
-                "--no-input",
-                "--output-dir", work_dir,
-                "--config-file", context_path,
-                self.TEMPLATE_URL,
-            ]
-
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                check=True,
-            )
-
-            # Clean up context file
-            os.remove(context_path)
-
-            # Format output
-            output = []
-            if result.stdout:
-                output.append("STDOUT:")
-                output.append(result.stdout)
-            if result.stderr:
-                output.append("STDERR:")
-                output.append(result.stderr)
-
             # Get repository path
             repo_name = f"{lab_name.lower().replace(' ', '-')}-to-nwb"
             repo_path = os.path.join(work_dir, repo_name)
 
-            formatted_output = "\n".join(output) if output else "Repository created successfully"
             logger.info(f"Successfully created repository at: {repo_path}")
-            return f"{formatted_output}\nRepository created at: {repo_path}"
-
-        except subprocess.CalledProcessError as e:
-            error_msg = f"Repository creation failed with exit code {e.returncode}"
-            if e.stdout:
-                error_msg += f"\nSTDOUT:\n{e.stdout}"
-            if e.stderr:
-                error_msg += f"\nSTDERR:\n{e.stderr}"
-            logger.error(error_msg)
-            raise
+            return f"Project created at: {repo_path}"
 
         except Exception as e:
             logger.error(f"Failed to create repository: {str(e)}")
