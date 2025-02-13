@@ -8,31 +8,28 @@ from smolagents import (
     PythonInterpreterTool,
     GradioUI,
 )
+
+from utils.logger import set_logger
 from tools.neuroconv_specialist_tool import NeuroconvSpecialistTool
+from tools.git_repo_tools import CreateNWBRepoTool
+from tools.nwbinspector_tool import NWBInspectorTool
+from tools.file_system_tools import (
+    WriteToFileTool,
+    ReadFileTool,
+    ReplaceInFileTool,
+    SearchFilesTool,
+    ListFilesTool,
+    DirectoryTreeTool,
+)
+from tools.cli_tools import ExecuteCommandTool
 
 # Telemetry
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
-
-from openinference.instrumentation.smolagents import SmolagentsInstrumentor
-from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SimpleSpanProcessor
-
-endpoint = "http://0.0.0.0:6006/v1/traces"
-trace_provider = TracerProvider()
-trace_provider.add_span_processor(SimpleSpanProcessor(OTLPSpanExporter(endpoint)))
-
-SmolagentsInstrumentor().instrument(tracer_provider=trace_provider)
-
+if os.getenv("TELEMETRY_ENABLED", "false").lower() == "true":
+    from utils.telemetry import set_telemetry
+    set_telemetry()
 
 # Configure logging
-import logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+logger = set_logger(name=__name__)
 
 # Check environment variables
 if not os.getenv("OPENROUTER_API_KEY", None):
@@ -41,10 +38,47 @@ if not os.getenv("OPENROUTER_API_KEY", None):
 
 logger.info("Initializing models and tools...")
 
+# Models
+code_model = LiteLLMModel("openrouter/anthropic/claude-3.5-sonnet")
+# code_model = LiteLLMModel("openrouter/google/gemini-2.0-flash-001")
 
+# Tools
+neuroconv_tool = NeuroconvSpecialistTool(
+    return_digest_summary=False,
+    llm_model="openrouter/openai/o3-mini",
+)
+write_to_file_tool = WriteToFileTool()
+read_file_tool = ReadFileTool()
+replace_in_file_tool = ReplaceInFileTool()
+search_files_tool = SearchFilesTool()
+list_files_tool = ListFilesTool()
+directory_tree_tool = DirectoryTreeTool()
+execute_command_tool = ExecuteCommandTool()
+create_nwb_repo_tool = CreateNWBRepoTool()
+nwb_inspector_tool = NWBInspectorTool()
+
+# More tools
+extra_tools = [
+    write_to_file_tool,
+    read_file_tool,
+    replace_in_file_tool,
+    search_files_tool,
+    list_files_tool,
+    directory_tree_tool,
+    execute_command_tool,
+    create_nwb_repo_tool,
+    nwb_inspector_tool,
+]
+
+# Agents
 agent = CodeAgent(
-    tools=[NeuroconvSpecialistTool()],
-    model=LiteLLMModel("openrouter/anthropic/claude-3.5-sonnet"),
+    tools=[
+        neuroconv_tool,
+        *extra_tools,
+    ],
+    model=code_model,
+    max_steps=10,
+    planning_interval=3,
     add_base_tools=True,
 )
 
@@ -53,7 +87,7 @@ try:
     # Configure Gradio to be accessible from outside the container
     GradioUI(agent).launch(
         server_name="0.0.0.0",  # Listen on all interfaces
-        server_port=7860        # Match the exposed port
+        server_port=7860,        # Match the exposed port
     )
 except Exception as e:
     logger.error(f"Failed to start Gradio interface: {str(e)}")

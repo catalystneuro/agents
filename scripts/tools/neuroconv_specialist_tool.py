@@ -57,6 +57,15 @@ class NeuroconvSpecialistTool(Tool):
     }
     output_type = "string"
 
+    def __init__(
+        self,
+        return_digest_summary: bool = True,
+        llm_model: str = "openrouter/openai/o3-mini",
+    ):
+        super().__init__()
+        self.return_digest_summary = return_digest_summary
+        self.llm_model = llm_model
+
     def forward(
         self,
         query: str,
@@ -71,10 +80,10 @@ class NeuroconvSpecialistTool(Tool):
                 keywords=None,
                 qdrant_api_key=os.getenv("QDRANT_API_KEY"),
                 timeout=60.0,
-                return_digest_summary=True,
+                return_digest_summary=self.return_digest_summary,
                 return_references=True,
                 limit=10,
-                model="openrouter/openai/o3-mini",
+                model=self.llm_model,
             )
         )
         return str(result)

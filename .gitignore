@@ -46,11 +46,6 @@ docker-compose.override.yml
 ehthumbs.db
 Thumbs.db
 
-# Project specific
-data/*
-logs/
-*.log
-
 # Unit test / coverage reports
 htmlcov/
 .tox/
@@ -67,5 +62,9 @@ coverage.xml
 cover/
 
 
-# Others
+# Project specific
+data/*
+agent_workspace/*
+logs/
+*.log
 .gradio/

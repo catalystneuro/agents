@@ -9,10 +9,13 @@ RUN pip install --upgrade pip && \
     "smolagents[gradio,litellm,mcp,openai,telemetry]==1.8.1" \
     instructor \
     qdrant-client \
-    "neuroconv==0.6.7" \
     nwbinspector \
     dandi \
+    "directory-tree==1.0.0" \
+    "cookiecutter==2.6.0" \
     jupyterlab
+
+RUN pip install "neuroconv[deeplabcut,spikeglx]==0.6.7"
 
 # Copy scripts directory
 COPY scripts /home/scripts

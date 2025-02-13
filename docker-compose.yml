@@ -9,9 +9,11 @@ services:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - QDRANT_API_KEY=${QDRANT_API_KEY}
+      - TELEMETRY_ENABLED=${TELEMETRY_ENABLED}
     ports:
       - "7860:7860"  # Gradio UI
       - "6006:6006"  # Telemetry/Phoenix
     volumes:
       - ./data:/home/data
       - ./scripts:/home/scripts
+      - ./agent_workspace:/home/agent_workspace
