@@ -38,3 +38,7 @@ docker compose down
 - `/data`: You should put your source data here.
 - `/agent_workspace`: This is where the code produced by the agents will be stored.
 - `/scripts`: Contains the python scripts to run the agents service.
+
+## Prompting the CatalystNeuro Agents
+
+Some useful prompt templates can be found in the `scripts/prompts/` directory. Adapt these to your use case.
