@@ -21,7 +21,7 @@ from tools.file_system_tools import (
     ListFilesTool,
     DirectoryTreeTool,
 )
-from tools.cli_tools import ExecuteCommandTool
+from tools.cli_tools import ExecuteCommandInTerminalTool
 
 # Telemetry
 if os.getenv("TELEMETRY_ENABLED", "false").lower() == "true":
@@ -54,7 +54,7 @@ replace_in_file_tool = ReplaceInFileTool()
 search_files_tool = SearchFilesTool()
 list_files_tool = ListFilesTool()
 directory_tree_tool = DirectoryTreeTool()
-execute_command_tool = ExecuteCommandTool()
+execute_command_tool = ExecuteCommandInTerminalTool()
 create_nwb_repo_tool = CreateNWBRepoTool()
 nwb_inspector_tool = NWBInspectorTool()
 

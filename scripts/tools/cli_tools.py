@@ -10,9 +10,9 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 
-class ExecuteCommandTool(Tool):
-    name = "execute_command"
-    description = "Execute CLI commands with safety checks and validation"
+class ExecuteCommandInTerminalTool(Tool):
+    name = "execute_command_in_terminal"
+    description = "Execute CLI commands with safety checks and validation."
     inputs = {
         "command": {
             "type": "string",

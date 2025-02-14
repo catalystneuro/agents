@@ -6,7 +6,8 @@ WORKDIR /home
 # Install Python dependencies
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir \
-    "smolagents[gradio,litellm,mcp,openai,telemetry]==1.8.1" \
+    "neuroconv[deeplabcut,spikeglx]==0.6.7" \
+    "smolagents[gradio,litellm,mcp,openai,telemetry]==1.9.0" \
     instructor \
     qdrant-client \
     nwbinspector \
@@ -15,7 +16,7 @@ RUN pip install --upgrade pip && \
     "cookiecutter==2.6.0" \
     jupyterlab
 
-RUN pip install "neuroconv[deeplabcut,spikeglx]==0.6.7"
+# RUN pip install
 
 # Copy scripts directory
 COPY scripts /home/scripts

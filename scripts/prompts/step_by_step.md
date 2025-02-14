@@ -6,8 +6,8 @@ General instructions:
 
 Project setup:
 - The first thing you must do is to create an NWB conversion repository using the create_nwb_repo tool, inside your working directory.
-- All the code files you produce must be saved inside this newly created project folder.
 - Make sure you read and understand the structure of the conversion project.
+- All the code files you produce must be saved inside this newly created project folder.
 
 Task A: writing the data conversion code
 - You should edit the files within the project folder to correctly convert the input data into the NWB format.

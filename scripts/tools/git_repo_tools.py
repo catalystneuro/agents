@@ -83,7 +83,7 @@ class CreateNWBRepoTool(Tool):
             logger.info(f"Output directory: {work_dir}")
 
             # Get repository path
-            repo_name = f"{lab_name.lower().replace(' ', '-')}-to-nwb"
+            repo_name = f"{lab_name.lower().replace(' ', '-')}-lab-to-nwb"
             repo_path = os.path.join(work_dir, repo_name)
 
             logger.info(f"Successfully created repository at: {repo_path}")
