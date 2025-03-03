@@ -12,19 +12,23 @@ logger = logging.getLogger(__name__)
 
 class CreateNWBRepoTool(Tool):
     name = "create_nwb_repo"
-    description = "Create a new NWB conversion repository from template."
+    description = """
+    Request to create a new NWB (Neurodata Without Borders) conversion repository from a template. 
+    This tool generates a standardized project structure for converting neurophysiology data to the NWB format,
+    following best practices and conventions. It uses a cookiecutter template to scaffold the entire project.
+    """
     inputs = {
         "lab_name": {
             "type": "string",
-            "description": "Lab name (e.g., 'Tauffer Lab')",
+            "description": "The name of the research lab or group (e.g., 'Tauffer Lab'). This will be used in naming the repository and in documentation.",
         },
         "conversion_name": {
             "type": "string",
-            "description": "Name of the conversion (e.g., 'conversionname2002a')",
+            "description": "A descriptive name for this specific conversion effort (e.g., 'electrophysiology2023a'). This helps identify the specific data modality and experiment being converted.",
         },
         "output_dir": {
             "type": "string",
-            "description": "Directory where the repository will be created",
+            "description": "The directory where the repository will be created (relative to the agent's working directory). If the directory doesn't exist, it will be created.",
         },
     }
     output_type = "string"

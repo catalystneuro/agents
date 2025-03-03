@@ -49,10 +49,16 @@ class FileSystemTool(Tool):
 
 class WriteToFileTool(FileSystemTool):
     name = "write_to_file"
-    description = "Create or overwrite files with specified content"
+    description = "Request to write content to a file at the specified path. If the file exists, it will be overwritten with the provided content. If the file doesn't exist, it will be created. This tool will automatically create any directories needed to write the file."
     inputs = {
-        "path": {"type": "string", "description": "Path to the file to write to"},
-        "content": {"type": "string", "description": "Content to write to the file"},
+        "path": {
+            "type": "string", 
+            "description": "The path of the file to write to (relative to the agent's working directory). This tool will automatically create any necessary directories in the path."
+        },
+        "content": {
+            "type": "string", 
+            "description": "The content to write to the file. ALWAYS provide the COMPLETE intended content of the file, without any truncation or omissions. You MUST include ALL parts of the file, even if they haven't been modified."
+        },
     }
     output_type = "string"
 
@@ -76,9 +82,12 @@ class WriteToFileTool(FileSystemTool):
 
 class ReadFileTool(FileSystemTool):
     name = "read_file"
-    description = "Read contents of a file"
+    description = "Request to read the contents of a file at the specified path. Use this when you need to examine the contents of an existing file you do not know the contents of, for example to analyze code, review text files, or extract information from configuration files."
     inputs = {
-        "path": {"type": "string", "description": "Path to the file to read"},
+        "path": {
+            "type": "string", 
+            "description": "The path of the file to read (relative to the agent's working directory). The file must exist and be readable."
+        },
     }
     output_type = "string"
 
@@ -102,11 +111,25 @@ class ReadFileTool(FileSystemTool):
 
 class ReplaceInFileTool(FileSystemTool):
     name = "replace_in_file"
-    description = "Make targeted edits to specific parts of a file"
+    description = """
+    Request to replace sections of content in an existing file. This tool should be used when you
+    need to make targeted changes to specific parts of a file without overwriting the entire file.
+    It's especially useful for small, localized changes like updating function implementations,
+    changing variable names, or modifying specific sections of text.
+    """
     inputs = {
-        "path": {"type": "string", "description": "Path to the file to modify"},
-        "search": {"type": "string", "description": "Content to find in the file"},
-        "replace": {"type": "string", "description": "Content to replace with"},
+        "path": {
+            "type": "string", 
+            "description": "The path of the file to modify (relative to the agent's working directory). The file must exist."
+        },
+        "search": {
+            "type": "string", 
+            "description": "The exact content to find in the file. This must match character-for-character, including whitespace and indentation."
+        },
+        "replace": {
+            "type": "string", 
+            "description": "The new content to replace the found content with. To delete content, provide an empty string."
+        },
     }
     output_type = "string"
 
@@ -138,13 +161,24 @@ class ReplaceInFileTool(FileSystemTool):
 
 class SearchFilesTool(FileSystemTool):
     name = "search_files"
-    description = "Search files using regex patterns"
+    description = """
+    Request to perform a regex search across files in a specified directory, providing context-rich results.
+    This tool searches for patterns or specific content across multiple files, displaying each match with
+    encapsulating context. It's particularly useful for understanding code patterns, finding specific
+    implementations, or identifying areas that need refactoring.
+    """
     inputs = {
-        "path": {"type": "string", "description": "Directory to search in"},
-        "regex": {"type": "string", "description": "Regular expression pattern to search for"},
+        "path": {
+            "type": "string", 
+            "description": "The path of the directory to search in (relative to the agent's working directory). This directory will be recursively searched."
+        },
+        "regex": {
+            "type": "string", 
+            "description": "The regular expression pattern to search for. Uses standard regex syntax. Craft patterns carefully to balance specificity and flexibility."
+        },
         "file_pattern": {
             "type": "string",
-            "description": "Optional glob pattern to filter files",
+            "description": "Optional glob pattern to filter files (e.g., '*.py' for Python files, '*.{js,ts}' for JavaScript and TypeScript). If not provided, it will search all files.",
             "nullable": True,
         },
     }
@@ -194,12 +228,19 @@ class SearchFilesTool(FileSystemTool):
 
 class ListFilesTool(FileSystemTool):
     name = "list_files"
-    description = "List directory contents"
+    description = """
+    Request to list files and directories within the specified directory. This provides an overview 
+    of the contents at the specified path, which can be useful for navigating and understanding
+    the structure of a project or filesystem.
+    """
     inputs = {
-        "path": {"type": "string", "description": "Directory to list contents for"},
+        "path": {
+            "type": "string", 
+            "description": "The path of the directory to list contents for (relative to the agent's working directory). The directory must exist."
+        },
         "recursive": {
             "type": "boolean",
-            "description": "Whether to list files recursively",
+            "description": "Whether to list files recursively. If true, will list all files and directories recursively. If false or not provided, it will only list the top-level contents.",
             "nullable": True,
         },
     }

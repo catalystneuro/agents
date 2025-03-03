@@ -31,28 +31,29 @@ if not os.getenv("QDRANT_API_KEY", None):
 class NeuroconvSpecialistTool(Tool):
     name = "neuroconv_specialist_tool"
     description = """
-    Use this tool to ask questions and learn about NeuroConv.
-    NeuroConv is a Python package for converting neurophysiology data in a variety of proprietary formats to the Neurodata Without Borders (NWB) standard.
-    Features:
-    - Reads data from 40 popular neurophysiology data formats and writes to NWB using best practices.
-    - Extracts relevant metadata from each format.
-    - Handles large data volume by reading datasets piece-wise.
-    - Minimizes the size of the NWB files by automatically applying chunking and lossless compression.
-    - Supports ensembles of multiple data streams, and supports common methods for temporal alignment of streams.
-
-    How to use the Neuroconv specialist: Formulate a concise search query and provide the relevant context.
-    Example:
-    query = "Convert spiking data from Blackrock systems to NWB."
-    context = "User wants to convert its recorded data to the NWB format, using NeuroConv."
+    Request to use the NeuroConv specialist tool to get information about converting neurophysiology data to NWB format.
+    
+    NeuroConv is a Python package for converting neurophysiology data in a variety of proprietary formats to the 
+    Neurodata Without Borders (NWB) standard. This tool provides specialized knowledge about NeuroConv capabilities,
+    usage patterns, best practices, and technical details.
+    
+    Features of NeuroConv:
+    - Reads data from 40+ popular neurophysiology data formats and writes to NWB using best practices
+    - Extracts relevant metadata from each format
+    - Handles large data volume by reading datasets piece-wise
+    - Minimizes the size of the NWB files by automatically applying chunking and lossless compression
+    - Supports ensembles of multiple data streams and methods for temporal alignment of streams
+    
+    This tool uses semantic search to find relevant information about NeuroConv based on your query and context.
     """
     inputs = {
         "query": {
             "type": "string",
-            "description": "A concise search query, containing the keywords of interest.",
+            "description": "A concise search query about NeuroConv, containing specific keywords related to the information needed (e.g., 'Convert spiking data from Blackrock systems to NWB')."
         },
         "context": {
             "type": "string",
-            "description": "A short but relevant context for the query.",
+            "description": "Additional context about your question or use case that will help the tool provide more relevant information (e.g., 'I need to convert recorded electrophysiology data to NWB format using NeuroConv')."
         },
     }
     output_type = "string"
