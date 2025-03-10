@@ -11,11 +11,15 @@ logger = logging.getLogger(__name__)
 
 class NWBInspectorTool(Tool):
     name = "inspect_nwb_files"
-    description = "Tool for inspection and quality control of all NWB files inside a directory."
+    description = """
+    Request to inspect and perform quality control checks on NWB (Neurodata Without Borders) files 
+    in a directory. This tool examines NWB files for compliance with the NWB standard, identifies
+    potential issues, and validates file structure and content integrity.
+    """
     inputs = {
         "nwb_dir_path": {
             "type": "string",
-            "description": "Path to the NWB directory to be inspected",
+            "description": "The path to the directory containing NWB files to be inspected (relative to the agent's working directory). The directory must exist and contain files with the .nwb extension.",
         },
     }
     output_type = "string"

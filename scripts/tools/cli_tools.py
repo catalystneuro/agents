@@ -12,19 +12,25 @@ logger = logging.getLogger(__name__)
 
 class ExecuteCommandInTerminalTool(Tool):
     name = "execute_command_in_terminal"
-    description = "Execute CLI commands with safety checks and validation."
+    description = """
+    Request to execute a CLI command on the system. Use this when you need to perform system operations 
+    or run specific commands to accomplish any step in a task. You must tailor your command to the 
+    system and provide a clear explanation of what the command does. For command chaining, use the 
+    appropriate chaining syntax for the user's shell. Prefer to execute complex CLI commands over 
+    creating executable scripts, as they are more flexible and easier to run.
+    """
     inputs = {
         "command": {
             "type": "string",
-            "description": "The CLI command to execute",
+            "description": "The CLI command to execute. This should be valid for the current operating system. Ensure the command is properly formatted and does not contain any harmful instructions.",
         },
         "requires_approval": {
             "type": "boolean",
-            "description": "Whether this command requires explicit approval",
+            "description": "Whether this command requires explicit approval before execution. Set to 'true' for potentially impactful operations like installing/uninstalling packages, deleting/overwriting files, system configuration changes, network operations, or commands with side effects. Set to 'false' for safe operations like reading files/directories, running development servers, building projects, etc.",
         },
         "working_dir": {
             "type": "string",
-            "description": "Working directory for command execution",
+            "description": "The directory where the command should be executed. If not provided, the command will be executed in the agent's working directory.",
             "nullable": True,
         },
     }
