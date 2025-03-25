@@ -79,17 +79,23 @@ agent = CodeAgent(
     ],
     model=code_model,
     max_steps=40,
-    planning_interval=3,
+    planning_interval=2,
     add_base_tools=True,
 )
 
-try:
-    logger.info("Starting Gradio interface...")
-    # Configure Gradio to be accessible from outside the container
-    GradioUI(agent).launch(
-        server_name="0.0.0.0",  # Listen on all interfaces
-        server_port=7860,        # Match the exposed port
-    )
-except Exception as e:
-    logger.error(f"Failed to start Gradio interface: {str(e)}")
-    raise
+demo = GradioUI(agent).create_app()
+
+
+if __name__ == "__main__":
+    try:
+        logger.info("Starting Gradio interface...")
+        # Configure Gradio to be accessible from outside the container
+        demo.launch(
+            server_name="0.0.0.0",  # Listen on all interfaces
+            server_port=7860,       # Match the exposed port
+            debug=True,
+            share=False,
+        )
+    except Exception as e:
+        logger.error(f"Failed to start Gradio interface: {str(e)}")
+        raise

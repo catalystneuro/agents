@@ -16,7 +16,9 @@ RUN pip install --upgrade pip && \
     "cookiecutter==2.6.0" \
     jupyterlab
 
-# RUN pip install
+# temporary pip install from source
+RUN pip install git+https://github.com/huggingface/smolagents.git
+
 
 # Copy scripts directory
 COPY scripts /home/scripts
