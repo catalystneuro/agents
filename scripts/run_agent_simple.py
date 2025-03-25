@@ -44,17 +44,19 @@ code_model = LiteLLMModel("openrouter/google/gemini-2.0-flash-001")
 # code_model = LiteLLMModel("openrouter/google/gemini-2.0-pro-exp-02-05:free")
 
 # Tools
+working_dir = "/home/agent_workspace"
+
 neuroconv_tool = NeuroconvSpecialistTool(
     return_digest_summary=False,
     llm_model="openrouter/openai/o3-mini",
 )
-write_to_file_tool = WriteToFileTool()
-read_file_tool = ReadFileTool()
-replace_in_file_tool = ReplaceInFileTool()
-search_files_tool = SearchFilesTool()
-list_files_tool = ListFilesTool()
-directory_tree_tool = DirectoryTreeTool()
-execute_command_tool = ExecuteCommandInTerminalTool()
+write_to_file_tool = WriteToFileTool(work_dir=working_dir)
+read_file_tool = ReadFileTool(work_dir=working_dir)
+replace_in_file_tool = ReplaceInFileTool(work_dir=working_dir)
+search_files_tool = SearchFilesTool(work_dir=working_dir)
+list_files_tool = ListFilesTool(work_dir=working_dir)
+directory_tree_tool = DirectoryTreeTool(work_dir=working_dir)
+execute_command_tool = ExecuteCommandInTerminalTool(allowed_dirs=[working_dir])
 create_nwb_repo_tool = CreateNWBRepoTool()
 nwb_inspector_tool = NWBInspectorTool()
 

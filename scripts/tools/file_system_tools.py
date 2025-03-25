@@ -15,6 +15,10 @@ logger = logging.getLogger(__name__)
 class FileSystemTool(Tool):
     """Base class for file system operations tools."""
 
+    def __init__(self, work_dir: str = "/home/agent_workspace"):
+        super().__init__()
+        self.work_dir = work_dir
+
     def _validate_path_write(self, path: str) -> str:
         if not path:
             raise ValueError("Path cannot be empty")
@@ -27,9 +31,8 @@ class FileSystemTool(Tool):
             raise ValueError(f"Invalid path: {path}")
 
         # Validate working directory
-        work_dir = os.getenv("AGENT_WORK_DIR", "/home/agent_workspace")
-        if not abs_path.startswith(work_dir):
-            raise ValueError(f"Path {abs_path} is outside of the agent working directory {work_dir}")
+        if not abs_path.startswith(self.work_dir):
+            raise ValueError(f"Path {abs_path} is outside of the agent working directory {self.work_dir}")
 
         return abs_path
 
@@ -52,11 +55,11 @@ class WriteToFileTool(FileSystemTool):
     description = "Request to write content to a file at the specified path. If the file exists, it will be overwritten with the provided content. If the file doesn't exist, it will be created. This tool will automatically create any directories needed to write the file."
     inputs = {
         "path": {
-            "type": "string", 
+            "type": "string",
             "description": "The path of the file to write to (relative to the agent's working directory). This tool will automatically create any necessary directories in the path."
         },
         "content": {
-            "type": "string", 
+            "type": "string",
             "description": "The content to write to the file. ALWAYS provide the COMPLETE intended content of the file, without any truncation or omissions. You MUST include ALL parts of the file, even if they haven't been modified."
         },
     }
@@ -85,7 +88,7 @@ class ReadFileTool(FileSystemTool):
     description = "Request to read the contents of a file at the specified path. Use this when you need to examine the contents of an existing file you do not know the contents of, for example to analyze code, review text files, or extract information from configuration files."
     inputs = {
         "path": {
-            "type": "string", 
+            "type": "string",
             "description": "The path of the file to read (relative to the agent's working directory). The file must exist and be readable."
         },
     }
@@ -119,15 +122,15 @@ class ReplaceInFileTool(FileSystemTool):
     """
     inputs = {
         "path": {
-            "type": "string", 
+            "type": "string",
             "description": "The path of the file to modify (relative to the agent's working directory). The file must exist."
         },
         "search": {
-            "type": "string", 
+            "type": "string",
             "description": "The exact content to find in the file. This must match character-for-character, including whitespace and indentation."
         },
         "replace": {
-            "type": "string", 
+            "type": "string",
             "description": "The new content to replace the found content with. To delete content, provide an empty string."
         },
     }
@@ -169,11 +172,11 @@ class SearchFilesTool(FileSystemTool):
     """
     inputs = {
         "path": {
-            "type": "string", 
+            "type": "string",
             "description": "The path of the directory to search in (relative to the agent's working directory). This directory will be recursively searched."
         },
         "regex": {
-            "type": "string", 
+            "type": "string",
             "description": "The regular expression pattern to search for. Uses standard regex syntax. Craft patterns carefully to balance specificity and flexibility."
         },
         "file_pattern": {
@@ -229,13 +232,13 @@ class SearchFilesTool(FileSystemTool):
 class ListFilesTool(FileSystemTool):
     name = "list_files"
     description = """
-    Request to list files and directories within the specified directory. This provides an overview 
+    Request to list files and directories within the specified directory. This provides an overview
     of the contents at the specified path, which can be useful for navigating and understanding
     the structure of a project or filesystem.
     """
     inputs = {
         "path": {
-            "type": "string", 
+            "type": "string",
             "description": "The path of the directory to list contents for (relative to the agent's working directory). The directory must exist."
         },
         "recursive": {

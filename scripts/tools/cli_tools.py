@@ -13,10 +13,10 @@ logger = logging.getLogger(__name__)
 class ExecuteCommandInTerminalTool(Tool):
     name = "execute_command_in_terminal"
     description = """
-    Request to execute a CLI command on the system. Use this when you need to perform system operations 
-    or run specific commands to accomplish any step in a task. You must tailor your command to the 
-    system and provide a clear explanation of what the command does. For command chaining, use the 
-    appropriate chaining syntax for the user's shell. Prefer to execute complex CLI commands over 
+    Request to execute a CLI command on the system. Use this when you need to perform system operations
+    or run specific commands to accomplish any step in a task. You must tailor your command to the
+    system and provide a clear explanation of what the command does. For command chaining, use the
+    appropriate chaining syntax for the user's shell. Prefer to execute complex CLI commands over
     creating executable scripts, as they are more flexible and easier to run.
     """
     inputs = {
@@ -48,6 +48,10 @@ class ExecuteCommandInTerminalTool(Tool):
         # "chown",
     ]
 
+    def __init__(self, allowed_dirs: List[str] = ["/home/agent_workspace"]):
+        super().__init__()
+        self.allowed_dirs = allowed_dirs
+
     def _validate_command(self, command: str) -> None:
         # Check for dangerous commands
         command_lower = command.lower()
@@ -73,10 +77,9 @@ class ExecuteCommandInTerminalTool(Tool):
             raise NotADirectoryError(f"Not a directory: {abs_path}")
 
         # Validate working directory
-        allowed_working_dir = os.getenv("AGENT_WORK_DIR", "/home/agent_workspace")
-        if not abs_path.startswith(allowed_working_dir):
+        if not any(abs_path.startswith(allowed_dir) for allowed_dir in self.allowed_dirs):
             raise ValueError(
-                f"Path {abs_path} is outside of the agent working directory {allowed_working_dir}"
+                f"Path {abs_path} is outside of the agent allowed directories: {self.allowed_dirs}"
             )
 
         return abs_path
