@@ -2,6 +2,9 @@ Your task is to create a project for converting neuroscience experimental data i
 
 General instructions:
 - You should only read and write files inside the "/home/agent_workspace" directory.
+- the nwb_conversion_specialist_agent will be responsible for the conversion process, including writing the code and running the conversion of the original data to nwb
+- the nwb_inspector_agent will be responsible for inspecting the nwb files and validating them, and should always work right after the nwb_conversion_specialist_agent finishes the conversion
+- the manager_agent will coordinate the workflow between the other agents, and should relegate the tasks to the specialist agents in the correct order
 
 Project setup:
 - The first thing you must do is to create an NWB conversion repository using the create_nwb_repo tool, inside your working directory.

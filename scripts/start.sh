@@ -9,7 +9,9 @@ if [ "$TELEMETRY_ENABLED" = "true" ]; then
 fi
 
 echo "Starting LLM agent with Gradio UI..."
-gradio scripts/run_agent_simple.py
+cd scripts
+# gradio run_agent_simple.py
+gradio run_agent_multi.py
 
 # python scripts/run_agent_simple.py
 # cd scripts

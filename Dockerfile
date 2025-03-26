@@ -19,7 +19,6 @@ RUN pip install --upgrade pip && \
 # temporary pip install from source
 RUN pip install git+https://github.com/huggingface/smolagents.git
 
-
 # Copy scripts directory
 COPY scripts /home/scripts
 
