@@ -3,18 +3,12 @@ FROM python:3.11
 # Set working directory to home
 WORKDIR /home
 
-# Install Python dependencies
+# Copy requirements file
+COPY requirements.txt /home/requirements.txt
+
+# Install Python dependencies from requirements file
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir \
-    "neuroconv[deeplabcut,spikeglx]==0.6.7" \
-    "smolagents[gradio,litellm,mcp,openai,telemetry]==1.9.0" \
-    instructor \
-    qdrant-client \
-    nwbinspector \
-    dandi \
-    "directory-tree==1.0.0" \
-    "cookiecutter==2.6.0" \
-    jupyterlab
+    pip install --no-cache-dir -r requirements.txt
 
 # temporary pip install from source
 RUN pip install git+https://github.com/huggingface/smolagents.git

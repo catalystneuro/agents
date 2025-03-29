@@ -73,7 +73,8 @@ nwb_specialist_agent = ToolCallingAgent(
         VisitWebpageTool(),
     ],
     model=LiteLLMModel("openrouter/anthropic/claude-3.7-sonnet"),
-    planning_interval=3,
+    # model=LiteLLMModel("openrouter/google/gemini-2.5-pro-exp-03-25:free"),
+    # planning_interval=3,
     max_steps=20,
     add_base_tools=False,
 )
@@ -89,7 +90,10 @@ nwb_inspector_agent = ToolCallingAgent(
         nwb_inspector_tool,
     ],
     # model=LiteLLMModel("openrouter/anthropic/claude-3.7-sonnet"),
-    model=LiteLLMModel("openrouter/openai/o3-mini-high"),
+    # model=LiteLLMModel("openrouter/openai/o3-mini-high"),
+    model=LiteLLMModel("openrouter/google/gemini-2.5-pro-exp-03-25:free"),
+    # planning_interval=3,
+    max_steps=5,
     add_base_tools=False,
 )
 
@@ -98,13 +102,14 @@ manager_agent = CodeAgent(
     tools=[
         PythonInterpreterTool(),
     ],
-    model=LiteLLMModel("openrouter/anthropic/claude-3.7-sonnet"),
+    # model=LiteLLMModel("openrouter/anthropic/claude-3.7-sonnet"),
     # model=LiteLLMModel("openrouter/openai/o3-mini-high"),
+    model=LiteLLMModel("openrouter/google/gemini-2.5-pro-exp-03-25:free"),
     managed_agents=[
         nwb_specialist_agent,
         nwb_inspector_agent,
     ],
-    planning_interval=3,
+    # planning_interval=3,
     max_steps=40,
     add_base_tools=False,
 )
@@ -122,6 +127,7 @@ if __name__ == "__main__":
             debug=True,
             share=False,
         )
+        # manager_agent.run("hello, how are you?")
     except Exception as e:
         logger.error(f"Failed to start Gradio interface: {str(e)}")
         raise

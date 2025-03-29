@@ -1,17 +1,18 @@
 #!/bin/bash
 
-if [ "$TELEMETRY_ENABLED" = "true" ]; then
-    echo "Starting Phoenix telemetry server..."
-    python -m phoenix.server.main serve &
+# if [ "$TELEMETRY_ENABLED" = "true" ]; then
+#     echo "Starting Phoenix telemetry server..."
+#     python -m phoenix.server.main serve &
 
-    # Wait a moment to ensure Phoenix server is up
-    sleep 5
-fi
+#     # Wait a moment to ensure Phoenix server is up
+#     sleep 5
+# fi
 
 echo "Starting LLM agent with Gradio UI..."
 cd scripts
 # gradio run_agent_simple.py
 gradio run_agent_multi.py
+# python test_telemetry.py
 
 # python scripts/run_agent_simple.py
 # cd scripts

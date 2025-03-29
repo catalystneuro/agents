@@ -1,3 +1,4 @@
+from smolagents import CodeAgent, DuckDuckGoSearchTool, LiteLLMModel
 import os
 import base64
 from typing import Literal
@@ -43,3 +44,13 @@ def set_telemetry(system: Literal["langfuse", "phoenix"] = "langfuse"):
 
     # Instrument smolagents with the configured provider
     SmolagentsInstrumentor().instrument(tracer_provider=trace_provider)
+
+
+set_telemetry()
+search_tool = DuckDuckGoSearchTool()
+agent = CodeAgent(
+    tools=[search_tool],
+    model=LiteLLMModel("openrouter/anthropic/claude-3.7-sonnet"),
+)
+
+agent.run("Hi, how are you?")
