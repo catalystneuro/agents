@@ -4,16 +4,14 @@ from cookiecutter.main import cookiecutter
 from smolagents import Tool
 
 # Configure logging
-import logging
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-logger = logging.getLogger(__name__)
+from utils.logger import set_logger
+logger = set_logger(__name__)
 
 
 class CreateNWBRepoTool(Tool):
     name = "create_nwb_repo"
     description = """
-    Request to create a new NWB (Neurodata Without Borders) conversion repository from a template. 
+    Request to create a new NWB (Neurodata Without Borders) conversion repository from a template.
     This tool generates a standardized project structure for converting neurophysiology data to the NWB format,
     following best practices and conventions. It uses a cookiecutter template to scaffold the entire project.
     """

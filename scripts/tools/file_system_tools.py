@@ -6,10 +6,8 @@ from typing import Optional, List, Dict, Any
 from smolagents import Tool
 
 # Configure logging
-import logging
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-logger = logging.getLogger(__name__)
+from utils.logger import set_logger
+logger = set_logger(__name__)
 
 
 class FileSystemTool(Tool):

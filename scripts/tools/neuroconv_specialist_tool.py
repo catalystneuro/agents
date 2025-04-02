@@ -5,12 +5,8 @@ from smolagents import Tool
 from .semantic_search import search
 
 # Configure logging
-import logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+from utils.logger import set_logger
+logger = set_logger(__name__)
 
 
 # Check environment variables
@@ -27,23 +23,22 @@ if not os.getenv("QDRANT_API_KEY", None):
     raise ValueError("Please set the QDRANT_API_KEY environment variable.")
 
 
-
 class NeuroconvSpecialistTool(Tool):
     name = "neuroconv_specialist_tool"
     description = """
     Request to use the NeuroConv specialist tool to get information about converting neurophysiology data to NWB format.
-    
-    NeuroConv is a Python package for converting neurophysiology data in a variety of proprietary formats to the 
+
+    NeuroConv is a Python package for converting neurophysiology data in a variety of proprietary formats to the
     Neurodata Without Borders (NWB) standard. This tool provides specialized knowledge about NeuroConv capabilities,
     usage patterns, best practices, and technical details.
-    
+
     Features of NeuroConv:
     - Reads data from 40+ popular neurophysiology data formats and writes to NWB using best practices
     - Extracts relevant metadata from each format
     - Handles large data volume by reading datasets piece-wise
     - Minimizes the size of the NWB files by automatically applying chunking and lossless compression
     - Supports ensembles of multiple data streams and methods for temporal alignment of streams
-    
+
     This tool uses semantic search to find relevant information about NeuroConv based on your query and context.
     """
     inputs = {
@@ -88,6 +83,7 @@ class NeuroconvSpecialistTool(Tool):
                     model=self.llm_model,
                 )
             )
+            logger.info(f"NeuroConv specialist tool result: \n{result}")
             return str(result)
         except Exception as e:
             logger.error(f"neuroconv_specialist_tool failed with error: {str(e)}")

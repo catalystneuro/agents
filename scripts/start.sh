@@ -10,9 +10,11 @@
 
 echo "Starting LLM agent with Gradio UI..."
 cd scripts
-# gradio run_agent_simple.py
-gradio run_agent_multi.py
+gradio run_agent_simple.py
+# gradio run_agent_multi.py
 # python test_telemetry.py
+# python run_agent_example.py
+
 
 # python scripts/run_agent_simple.py
 # cd scripts

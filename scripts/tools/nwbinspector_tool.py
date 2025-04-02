@@ -3,16 +3,15 @@ from pathlib import Path
 from smolagents import Tool
 
 # Configure logging
-import logging
+from utils.logger import set_logger
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-logger = logging.getLogger(__name__)
+logger = set_logger(__name__)
 
 
 class NWBInspectorTool(Tool):
     name = "inspect_nwb_files"
     description = """
-    Request to inspect and perform quality control checks on NWB (Neurodata Without Borders) files 
+    Request to inspect and perform quality control checks on NWB (Neurodata Without Borders) files
     in a directory. This tool examines NWB files for compliance with the NWB standard, identifies
     potential issues, and validates file structure and content integrity.
     """
@@ -53,8 +52,9 @@ class NWBInspectorTool(Tool):
 
             results = dict()
             for p in Path(work_dir).glob("*.nwb"):
-                results[p.name] = inspect_nwbfile(nwbfile_path=str(p.resolve()))
+                results[p.name] = list(inspect_nwbfile(nwbfile_path=str(p.resolve())))
 
+            logger.info(f"Inspection results: {results}")
             return str(results)
         except Exception as e:
             logger.error(f"Failed to inspect NWB files: {str(e)}")
