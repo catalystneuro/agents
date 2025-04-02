@@ -68,3 +68,5 @@ agent_workspace/*
 logs/
 *.log
 .gradio/
+
+smolagents/*

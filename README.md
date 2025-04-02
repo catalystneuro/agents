@@ -17,6 +17,7 @@ export QDRANT_API_KEY=your_qdrant_api_key_here
 export TELEMETRY_ENABLED=true
 ```
 
+
 ## Running with Docker Compose
 
 Build and start the container:
@@ -31,6 +32,27 @@ This will:
 To shut it down, use `CTRL+C` and then:
 ```bash
 docker compose down
+```
+
+## Running with Docker
+
+Build the image:
+```
+docker build -t catalystneuro_agent .
+```
+
+Run the container:
+```bash
+docker run \
+  --name llm-agent \
+  -e OPENROUTER_API_KEY=${OPENROUTER_API_KEY} \
+  -e OPENAI_API_KEY=${OPENAI_API_KEY} \
+  -e QDRANT_API_KEY=${QDRANT_API_KEY} \
+  -e TELEMETRY_ENABLED=${TELEMETRY_ENABLED} \
+  -v "$(pwd)/data:/home/data" \
+  -v "$(pwd)/scripts:/home/scripts" \
+  -v "$(pwd)/agent_workspace:/home/agent_workspace" \
+  catalystneuro_agent
 ```
 
 ## Directory Structure

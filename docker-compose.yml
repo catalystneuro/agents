@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: catalystneuro_agent:latest
     environment:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
@@ -13,6 +14,7 @@ services:
     ports:
       - "7860:7860"  # Gradio UI
       - "6006:6006"  # Telemetry/Phoenix
+      - "8889:8889"  # Jupyter Notebook
     volumes:
       - ./data:/home/data
       - ./scripts:/home/scripts

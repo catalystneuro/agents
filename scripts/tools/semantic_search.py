@@ -9,6 +9,10 @@ from qdrant_client import AsyncQdrantClient, models
 from qdrant_client.http.models import Distance, VectorParams
 from pydantic import BaseModel
 
+# Configure logging
+from utils.logger import set_logger
+logger = set_logger(__name__)
+
 
 # Prompts for LLM interactions
 FILTER_RESULTS_PROMPT = """Given a search query, its context, and a list of search results, determine which results are truly relevant to answering the query within its context.
@@ -277,9 +281,9 @@ async def search(
         - summary: Generated summary (if return_digest_summary=True)
     """
     # Step 1: Generate alternative queries
-    print(f"Expanding query: {query}")
+    logger.info(f"Expanding query: {query}")
     expanded_queries = await expand_query(query, context, model)
-    print(f"Expanded queries: {expanded_queries}")
+    logger.info(f"Expanded queries: {expanded_queries}")
 
     # Initialize Qdrant client
     client = AsyncQdrantClient(url=qdrant_url, api_key=qdrant_api_key, timeout=timeout)
@@ -287,7 +291,7 @@ async def search(
     # Get vector names from collection
     collection_info = await client.get_collection(collection_name=collection_name)
     vector_names = list(collection_info.config.params.vectors.keys())
-    print(f"Available vector names: {vector_names}")
+    logger.info(f"Available vector names: {vector_names}")
 
     # Dictionary to track unique results by ID
     unique_results: Dict[str, SearchResult] = {}
@@ -308,7 +312,7 @@ async def search(
             result = SearchResult.from_dict(r)
             if result.id not in unique_results or result.score > unique_results[result.id].score:
                 unique_results[result.id] = result
-        print(f"Semantic search results for original query with {vector_name}: {len(results_list)}")
+        logger.info(f"Semantic search results for original query with {vector_name}: {len(results_list)}")
 
     # Expanded queries search
     for exp_query in expanded_queries:
@@ -329,7 +333,7 @@ async def search(
                     or result.score > unique_results[result.id].score
                 ):
                     unique_results[result.id] = result
-            print(
+            logger.info(
                 f"Semantic search results for expanded query with {vector_name}: {len(results_list)}"
             )
 
@@ -340,7 +344,7 @@ async def search(
 
     # Keyword search if keywords provided
     if keywords:
-        print("Keyword search not implemented")
+        logger.info("Keyword search not implemented")
 
     combined_results = semantic_results[0]
 
@@ -355,7 +359,7 @@ async def search(
 
     if return_digest_summary and combined_results:
         # First filter the results
-        print(f"LLM is filtering the search results")
+        logger.info("LLM is filtering the search results")
         filtered_results = await llm_filter_results(
             query=query,
             context=context,
@@ -369,7 +373,7 @@ async def search(
                 {"id": r.id, "score": r.score, "content": r.content, **r.metadata}
                 for r in filtered_results
             ]
-            print(f"Generating summary based on filtered results")
+            logger.info("Generating summary based on filtered results")
             response["summary"] = await generate_summary(
                 query=query,
                 context=context,
