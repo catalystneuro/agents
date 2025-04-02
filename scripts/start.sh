@@ -23,7 +23,8 @@ echo "Jupyter lab server is running at http://localhost:8889"
 # Start Gradio server
 echo "Starting LLM agent with Gradio UI..."
 cd /home/scripts
-gradio run_agent_simple.py
+# gradio run_agent_simple.py
+
 # gradio run_agent_multi.py
 # python test_telemetry.py
 # python run_agent_example.py
