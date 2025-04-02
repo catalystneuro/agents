@@ -300,7 +300,7 @@ class GradioUI:
                         [upload_status, file_uploads_log],
                     )
 
-            # Add custom CSS to make tabs take full height
+            # Add custom CSS to make tabs take full height with proper scrolling
             gr.HTML("""
             <style>
             .full-height-tabs {
@@ -308,16 +308,25 @@ class GradioUI:
                 flex-direction: column;
                 height: calc(100vh - 200px);
                 min-height: 600px;
+                overflow: hidden; /* Prevent overflow at container level */
             }
-            .full-height-tabs {
+            .full-height-tabs > div:nth-child(2) {
                 flex-grow: 1;
                 display: flex;
                 flex-direction: column;
+                overflow: hidden; /* Prevent overflow at tabs level */
             }
             .full-height-tabs .chatbot {
                 flex-grow: 1;
                 height: 100% !important;
-                min-height: 800px;
+                min-height: 500px;
+                max-height: calc(100vh - 250px); /* Ensure it doesn't grow beyond viewport */
+                overflow-y: auto !important; /* Enable vertical scrolling */
+            }
+            /* Ensure the messages container inside chatbot also scrolls properly */
+            .full-height-tabs .chatbot > div {
+                max-height: 100%;
+                overflow-y: auto !important;
             }
             </style>
             """)
