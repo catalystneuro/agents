@@ -5,7 +5,6 @@ from smolagents import (
     DuckDuckGoSearchTool,
     VisitWebpageTool,
     MemoryBankTool,
-    GradioUI,
 )
 
 from utils.logger import set_logger
@@ -21,6 +20,8 @@ from tools.file_system_tools import (
     DirectoryTreeTool,
 )
 from tools.cli_tools import ExecuteCommandInTerminalTool
+from ui.gradio_ui import GradioUI
+
 
 # Telemetry
 if os.getenv("TELEMETRY_ENABLED", "false").lower() == "true":
