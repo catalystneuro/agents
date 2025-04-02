@@ -12,8 +12,12 @@ class MemoryBankTool(Tool):
     description = """
     Tool for interacting with the agent's Memory Bank, a structured collection of markdown files
     that maintain continuity and coherence across problem-solving steps. The Memory Bank includes
-    sections for Project Overview, Contextual Information, Technical Specifications,
-    Active Progress Tracking, and Historical Progress.
+    sections for:
+    - Project Overview
+    - Contextual Information
+    - Technical Specifications
+    - Active Progress Tracking
+    - Historical Progress
 
     Before each step, the agent should consult the Memory Bank to align actions with project objectives and avoid redundancy.
     After each step, the agent should update the Memory Bank to reflect changes, insights gained, and decisions made.

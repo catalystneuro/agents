@@ -3,8 +3,8 @@ version: '3.8'
 services:
   llm-agent:
     build:
-      context: /mnt/shared_storage/Github
-      dockerfile: catalystneuro_agents/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     environment:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
@@ -21,4 +21,3 @@ services:
       - ./data:/home/data
       - ./scripts:/home/scripts
       - ./agent_workspace:/home/agent_workspace
-      - ./smolagents:/home/smolagents

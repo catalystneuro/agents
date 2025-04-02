@@ -1,10 +1,10 @@
 import os
+import yaml
 from smolagents import (
     CodeAgent,
     LiteLLMModel,
     DuckDuckGoSearchTool,
     VisitWebpageTool,
-    MemoryBankTool,
 )
 
 from utils.logger import set_logger
@@ -20,6 +20,7 @@ from tools.file_system_tools import (
     DirectoryTreeTool,
 )
 from tools.cli_tools import ExecuteCommandInTerminalTool
+from tools.memory_bank_tool import MemoryBankTool
 from ui.gradio_ui import GradioUI
 
 
@@ -59,6 +60,12 @@ memory_bank_tool = MemoryBankTool(
     memory_bank_dir_path=f"{working_dir}/memory_bank",
 )
 
+# Prompt templates
+this_dir = os.path.dirname(os.path.abspath(__file__))
+prompt_file = os.path.join(this_dir, "prompts", "code_agent.yaml")
+with open(prompt_file, 'r') as f:
+    prompt_templates = yaml.safe_load(f)
+
 # Agents
 agent = CodeAgent(
     tools=[
@@ -81,7 +88,7 @@ agent = CodeAgent(
     max_steps=50,
     planning_interval=2,
     add_base_tools=True,
-    use_memory_bank=True,
+    prompt_templates=prompt_templates,
 )
 
 demo = GradioUI(agent).create_app()

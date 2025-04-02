@@ -4,20 +4,17 @@ FROM python:3.11
 WORKDIR /home
 
 # Copy requirements file
-COPY catalystneuro_agents/requirements.txt /home/requirements.txt
+COPY requirements.txt /home/requirements.txt
 
 # Install Python dependencies from requirements file
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy smolagents package to the image (assuming it's in the build context)
-# and install it in editable mode
-COPY smolagents /home/smolagents
-RUN cd /home/smolagents && pip install -e .
+# temporary pip install from source
+# RUN pip install git+https://github.com/huggingface/smolagents.git
 
 # Copy scripts directory
-# COPY scripts /home/scripts
-COPY catalystneuro_agents/scripts /home/scripts
+COPY scripts /home/scripts
 
 # Set default command
 CMD ["/home/scripts/start.sh"]
