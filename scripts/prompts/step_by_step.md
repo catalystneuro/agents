@@ -37,26 +37,3 @@ Task 4: testing and validation
 - Finish the task when all NWB files were tested.
 
 Tasks 3 and 4 should happen iteratively until the NWB files are correctly formatted and passing all inspection tests.
-
-
-
-
-
-
-
-
-
-
-
-
-
-Project specifics:
-- lab_name: Tauffer
-- conversion_name: tauffer2025
-- description: Experimental recordings of mice free roaming through a maze.
-- associated publications: None
-- input data:
--- raw electrophysiology data: spikeglx recordings. Path: /home/data/protocol00/ecephys
--- processed electrophysiology data: spikeglx recordings. Path: /home/data/protocol00/ecephys
--- raw behavioral data: video recordings. Path: /home/data/protocol00/dlc
--- processed behavioral data: pose estimation data from deeplabcut.  Path: /home/data/protocol00/dlc
