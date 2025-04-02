@@ -305,19 +305,20 @@ class GradioUI:
                     """
                 )
 
-                gr.FileExplorer(
-                    label="Source data:",
-                    interactive=False,
-                    visible=True,
-                    root_dir="/home/data/",
-                )
+                with gr.Group():
+                    gr.Markdown("**Source data**", container=True)
+                    gr.FileExplorer(
+                        interactive=False,
+                        visible=True,
+                        root_dir="/home/data/",
+                    )
 
                 # load the text from prompts/step_by_step.md
                 with open("prompts/step_by_step.md", "r") as f:
                     text_value = f.read()
 
                 with gr.Group():
-                    gr.Markdown("**Your request**", container=True)
+                    gr.Markdown("**Conversion instructions:**", container=True)
                     text_input = gr.Textbox(
                         lines=3,
                         label="Chat Message",
@@ -485,6 +486,18 @@ class GradioUI:
                                     empty_md
                                 ]
                             )
+                        with gr.Tab("Agent Workspace"):
+                            gr.FileExplorer(
+                                interactive=False,
+                                visible=True,
+                                root_dir="/home/agent_workspace/",
+                                min_height=700,
+                                max_height="100%",
+                            )
+                        with gr.Tab("Jupyter"):
+                            gr.HTML(f"""
+                            <iframe src="http://localhost:8889/lab" width="100%" height="1000" style="border:none;"></iframe>
+                            """)
 
             # Set up event handlers
             text_input.submit(

@@ -10,9 +10,13 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - QDRANT_API_KEY=${QDRANT_API_KEY}
       - TELEMETRY_ENABLED=${TELEMETRY_ENABLED}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
     ports:
       - "7860:7860"  # Gradio UI
       - "6006:6006"  # Telemetry/Phoenix
+      - "8889:8889"  # Jupyter Notebook
     volumes:
       - ./data:/home/data
       - ./scripts:/home/scripts
