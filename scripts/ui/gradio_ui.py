@@ -300,7 +300,7 @@ class GradioUI:
                         [upload_status, file_uploads_log],
                     )
 
-            # Add custom CSS to make tabs take full height with proper scrolling
+            # Add custom CSS to make tabs take full height with proper scrolling and style memory bank cards
             gr.HTML("""
             <style>
             .full-height-tabs {
@@ -328,6 +328,23 @@ class GradioUI:
                 max-height: 100%;
                 overflow-y: auto !important;
             }
+            /* Style for memory bank cards */
+            .memory-bank-card {
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+                padding: 10px;
+                margin: 10px 0;
+                background-color: #f9f9f9;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                height: 500px;
+                overflow-y: auto;
+            }
+            .memory-bank-card h1 {
+                font-size: 1.2rem;
+                margin-top: 0;
+                border-bottom: 1px solid #e0e0e0;
+                padding-bottom: 5px;
+            }
             </style>
             """)
 
@@ -349,7 +366,46 @@ class GradioUI:
                                 elem_classes=["chatbot"],
                             )
                         with gr.Tab("Memory Bank"):
-                            gr.Button("New Lion")
+                            # Create a 2x3 grid layout for markdown files
+                            with gr.Row():
+                                with gr.Column(scale=1):
+                                    # First column
+                                    with gr.Row():
+                                        # Load and display active_progress_tracking.md
+                                        file_path = "/home/agent_workspace/memory_bank/active_progress_tracking.md"
+                                        with open(file_path) as f:
+                                            active_progress = f.read()
+                                        gr.Markdown(value=active_progress, elem_classes=["memory-bank-card"])
+                                    with gr.Row():
+                                        # Load and display contextual_information.md
+                                        file_path = "/home/agent_workspace/memory_bank/contextual_information.md"
+                                        with open(file_path) as f:
+                                            contextual_info = f.read()
+                                        gr.Markdown(value=contextual_info, elem_classes=["memory-bank-card"])
+                                    with gr.Row():
+                                        # Load and display historical_progress.md
+                                        file_path = "/home/agent_workspace/memory_bank/historical_progress.md"
+                                        with open(file_path) as f:
+                                            historical_progress = f.read()
+                                        gr.Markdown(value=historical_progress, elem_classes=["memory-bank-card"])
+
+                                with gr.Column(scale=1):
+                                    # Second column
+                                    with gr.Row():
+                                        # Load and display project_overview.md
+                                        file_path = "/home/agent_workspace/memory_bank/project_overview.md"
+                                        with open(file_path) as f:
+                                            project_overview = f.read()
+                                        gr.Markdown(value=project_overview, elem_classes=["memory-bank-card"])
+                                    with gr.Row():
+                                        # Load and display technical_specifications.md
+                                        file_path = "/home/agent_workspace/memory_bank/technical_specifications.md"
+                                        with open(file_path) as f:
+                                            tech_specs = f.read()
+                                        gr.Markdown(value=tech_specs, elem_classes=["memory-bank-card"])
+                                    with gr.Row():
+                                        # Empty cell
+                                        gr.Markdown(value="", elem_classes=["memory-bank-card"])
 
             # Set up event handlers
             text_input.submit(
