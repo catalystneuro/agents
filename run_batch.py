@@ -4,6 +4,7 @@ import subprocess
 import multiprocessing
 import argparse
 import time
+import datetime
 from pathlib import Path
 
 
@@ -41,6 +42,7 @@ def run_docker_container(process_num):
         f"-e=OPENAI_API_KEY={os.environ.get('OPENAI_API_KEY', '')}",
         f"-e=QDRANT_API_KEY={os.environ.get('QDRANT_API_KEY', '')}",
         f"-e=TELEMETRY_ENABLED={os.environ.get('TELEMETRY_ENABLED', 'false')}",
+        "-e=RUN_MODE=script",
         # Volume mounts
         f"-v={os.path.abspath('data')}:/home/data",
         f"-v={os.path.abspath('scripts')}:/home/scripts",
@@ -91,13 +93,40 @@ def process_results(results):
     print(f"Summary: {successful} of {total} containers completed successfully")
     print("\nPerforming results analysis...")
 
+    # Create markdown content
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    markdown_filename = f"results_{timestamp}.md"
+
+    markdown_content = f"""# Container Execution Results
+
+**Date:** {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+**Summary:** {successful} of {total} containers completed successfully
+
+## Container Details
+
+| Container | Status | Execution Time | Files Created |
+|-----------|--------|----------------|---------------|
+"""
+
     # Analyze outputs from each workspace
     for result in results:
         process_num = result["process_num"]
         workspace_dir = f"agent_workspace/{process_num}"
+        status = "✅ Success" if result["success"] else f"❌ Failed (Exit code: {result['exit_code']})"
+
+        # Add to markdown content
+        markdown_content += f"| {workspace_dir} | {status} | {result['execution_time']:.2f} seconds | {result['files_created']} |\n"
+
+        # Print to console (preserving original functionality)
         print(f"Processing results from workspace {workspace_dir}...")
         print(f"  - Execution time: {result['execution_time']:.2f} seconds")
         print(f"  - Files created: {result['files_created']}")
+
+    # Write markdown file
+    with open(markdown_filename, "w") as f:
+        f.write(markdown_content)
+
+    print(f"\nResults saved to {markdown_filename}")
 
 
 def main():
@@ -132,6 +161,12 @@ def main():
 
     # Process the results after all containers have finished
     process_results(results)
+
+    # Clean up Docker containers
+    print("Cleaning up Docker containers...")
+    for process_num in process_nums:
+        container_name = f"llm-agent-{process_num}"
+        subprocess.run(["docker", "rm", "-f", container_name], capture_output=True)
 
     return 0
 

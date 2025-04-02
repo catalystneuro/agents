@@ -1,5 +1,6 @@
 import os
 import yaml
+import argparse
 from smolagents import (
     CodeAgent,
     LiteLLMModel,
@@ -91,19 +92,34 @@ agent = CodeAgent(
     prompt_templates=prompt_templates,
 )
 
-demo = GradioUI(agent).create_app()
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Run the agent in different modes')
+    parser.add_argument('--run-mode', type=str, help='Mode to run the agent (e.g., "script")')
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
     try:
-        logger.info("Starting Gradio interface...")
-        # Configure Gradio to be accessible from outside the container
-        demo.launch(
-            server_name="0.0.0.0",  # Listen on all interfaces
-            server_port=7860,       # Match the exposed port
-            debug=True,
-            share=False,
-        )
+        args = parse_arguments()
+        if args.run_mode == "script":
+            logger.info("Running in script mode...")
+            # request = "Hi, how are you? Tell me a random fact about the universe."
+            step_by_step_file = os.path.join(this_dir, "prompts", "step_by_step.md")
+            with open(step_by_step_file, 'r') as f:
+                request = f.read()
+            response = agent.run(request)
+            logger.info(response)
+        else:
+            logger.info("Starting Gradio interface...")
+            demo = GradioUI(agent).create_app()
+            demo.launch(
+                server_name="0.0.0.0",
+                server_port=7860,
+                debug=True,
+                share=False,
+            )
+
     except Exception as e:
         logger.error(f"Failed to start Gradio interface: {str(e)}")
         raise e

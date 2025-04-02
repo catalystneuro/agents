@@ -23,7 +23,14 @@ echo "Jupyter lab server is running at http://localhost:8889"
 # Start Gradio server
 echo "Starting LLM agent with Gradio UI..."
 cd /home/scripts
-# gradio run_agent_simple.py
+
+if [ "$RUN_MODE" = "script" ]; then
+    echo "Running in script mode..."
+    python run_agent_simple.py --run-mode script
+else
+    echo "Running with Gradio UI..."
+    gradio run_agent_simple.py
+fi
 
 # gradio run_agent_multi.py
 # python test_telemetry.py
