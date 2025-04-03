@@ -158,10 +158,10 @@ if __name__ == "__main__":
         args = parse_arguments()
         if args.run_mode == "script":
             logger.info("Running in script mode...")
-            request = "Hi, how are you? Tell me a random fact about the universe."
-            # step_by_step_file = os.path.join(this_dir, "prompts", "step_by_step.md")
-            # with open(step_by_step_file, 'r') as f:
-            #     request = f.read()
+            # request = "Hi, how are you? Tell me a random fact about the universe."
+            step_by_step_file = os.path.join(this_dir, "prompts", "step_by_step.md")
+            with open(step_by_step_file, 'r') as f:
+                request = f.read()
             response = agent.run(request)
             logger.info(response)
         else:
