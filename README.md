@@ -14,9 +14,9 @@ Set the necessary environment variables:
 export OPENROUTER_API_KEY=your_api_key_here
 export OPENAI_API_KEY=your_openai_api_key_here
 export QDRANT_API_KEY=your_qdrant_api_key_here
-export TELEMETRY_ENABLED=true
 ```
 
+The environment variables necessary will depend on the models you are using in the `Select model` section in `scripts/run_agent_simple.py`.
 
 ## Running with Docker Compose
 
