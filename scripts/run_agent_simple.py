@@ -140,7 +140,7 @@ agent = CodeAgent(
     model=LiteLLMRouter(model_id="all_models", model_list=model_list, routing_strategy="simple-shuffle"),
     # model=LiteLLMModel("openrouter/anthropic/claude-3.7-sonnet"),
     # model=LiteLLMModel("openrouter/google/gemini-2.5-pro-exp-03-25:free"),
-    max_steps=50,
+    max_steps=70,
     planning_interval=2,
     add_base_tools=True,
     prompt_templates=prompt_templates,

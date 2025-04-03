@@ -68,7 +68,7 @@ class LiteLLMRouter(ApiModel):
             model_list=self._model_list,
             routing_strategy="simple-shuffle",
             num_retries=3,
-            retry_after=5,
+            retry_after=10,
         )
 
     def __call__(
