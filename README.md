@@ -1,6 +1,12 @@
-# LLM Agent Development Environment
+# LLM Agents for NWB conversion
 
-This repository contains a Docker-based development environment for LLM agents using smolagents.
+LLM agents for NWB conversion is a project that utilizes large language models (LLMs) to assist in the conversion of neurophysiology data into the Neurodata Without Borders (NWB) format. The project is designed to be flexible and extensible, allowing users to adapt the agents to their specific needs.
+
+The agents run in a Docker environment, guaranteeing reproducibility and ease of deployment.
+
+- Agents are written in Python using the [smolagents](https://github.com/huggingface/smolagents)
+- NWB conversion is done with [NeuroConv](https://github.com/catalystneuro/neuroconv) and [PyNWB](https://github.com/NeurodataWithoutBorders/pynwb)
+- Results validation is done with [nwbinspector](https://github.com/NeurodataWithoutBorders/nwbinspector)
 
 ## Setup
 
