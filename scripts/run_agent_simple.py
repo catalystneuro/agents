@@ -23,6 +23,7 @@ from tools.file_system_tools import (
 from tools.cli_tools import ExecuteCommandInTerminalTool
 from tools.memory_bank_tool import MemoryBankTool
 from ui.gradio_ui import GradioUI
+from utils.litellm_router import LiteLLMRouter
 
 
 # Telemetry
@@ -67,6 +68,58 @@ prompt_file = os.path.join(this_dir, "prompts", "code_agent.yaml")
 with open(prompt_file, 'r') as f:
     prompt_templates = yaml.safe_load(f)
 
+# Load model list
+model_list = [
+    {
+        "model_name": "all_models",
+        "litellm_params": {
+            "model": "openrouter/anthropic/claude-3.7-sonnet",
+            "api_key": os.getenv("OPENROUTER_API_KEY"),
+            "weight": 9,
+        }
+    },
+    {
+        "model_name": "all_models",
+        "litellm_params": {
+            "model": "openrouter/anthropic/claude-3.7-sonnet",
+            "api_key": os.getenv("OPENROUTER_API_KEY_LUIZ"),
+            "weight": 1,
+        }
+    },
+    {
+        "model_name": "all_models",
+        "litellm_params": {
+            "model": "openrouter/google/gemini-2.5-pro-exp-03-25:free",
+            "api_key": os.getenv("OPENROUTER_API_KEY"),
+            "weight": 1,
+        }
+    },
+    {
+        "model_name": "all_models",
+        "litellm_params": {
+            "model": "openrouter/google/gemini-2.5-pro-exp-03-25:free",
+            "api_key": os.getenv("OPENROUTER_API_KEY_LUIZ"),
+            "weight": 1,
+        }
+    },
+    {
+        "model_name": "all_models",
+        "litellm_params": {
+            "model": "gemini/gemini-2.5-pro-exp-03-25:free",
+            "api_key": os.getenv("GEMINI_API_KEY_LUIZ_1"),
+            "weight": 1,
+        }
+    },
+    {
+        "model_name": "all_models",
+        "litellm_params": {
+            "model": "gemini/gemini-2.5-pro-exp-03-25:free",
+            "api_key": os.getenv("GEMINI_API_KEY_LUIZ_2"),
+            "weight": 1,
+        }
+    },
+]
+
 # Agents
 agent = CodeAgent(
     tools=[
@@ -84,7 +137,8 @@ agent = CodeAgent(
         DuckDuckGoSearchTool(),
         VisitWebpageTool(),
     ],
-    model=LiteLLMModel("openrouter/anthropic/claude-3.7-sonnet"),
+    model=LiteLLMRouter(model_id="all_models", model_list=model_list, routing_strategy="simple-shuffle"),
+    # model=LiteLLMModel("openrouter/anthropic/claude-3.7-sonnet"),
     # model=LiteLLMModel("openrouter/google/gemini-2.5-pro-exp-03-25:free"),
     max_steps=50,
     planning_interval=2,
@@ -104,10 +158,10 @@ if __name__ == "__main__":
         args = parse_arguments()
         if args.run_mode == "script":
             logger.info("Running in script mode...")
-            # request = "Hi, how are you? Tell me a random fact about the universe."
-            step_by_step_file = os.path.join(this_dir, "prompts", "step_by_step.md")
-            with open(step_by_step_file, 'r') as f:
-                request = f.read()
+            request = "Hi, how are you? Tell me a random fact about the universe."
+            # step_by_step_file = os.path.join(this_dir, "prompts", "step_by_step.md")
+            # with open(step_by_step_file, 'r') as f:
+            #     request = f.read()
             response = agent.run(request)
             logger.info(response)
         else:

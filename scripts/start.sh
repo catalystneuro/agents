@@ -8,27 +8,25 @@
 #     sleep 5
 # fi
 
-# Start Jupyter lab server
-echo "Starting Jupyter lab server..."
-
-cd /home/agent_workspace
-jupyter lab --no-browser --allow-root --port=8889 --ip=0.0.0.0 \
-    --NotebookApp.token='' \
-    --NotebookApp.disable_check_xsrf=True \
-    --NotebookApp.tornado_settings="{'headers': {'Content-Security-Policy': 'frame-ancestors *'}}" \
-    --NotebookApp.allow_origin='*' &
-
-echo "Jupyter lab server is running at http://localhost:8889"
-
-# Start Gradio server
-echo "Starting LLM agent with Gradio UI..."
-cd /home/scripts
 
 if [ "$RUN_MODE" = "script" ]; then
     echo "Running in script mode..."
+    cd /home/scripts
     python run_agent_simple.py --run-mode script
 else
+    # Start Jupyter lab server
+    echo "Starting Jupyter lab server..."
+    cd /home/agent_workspace
+    jupyter lab --no-browser --allow-root --port=8889 --ip=0.0.0.0 \
+        --NotebookApp.token='' \
+        --NotebookApp.disable_check_xsrf=True \
+        --NotebookApp.tornado_settings="{'headers': {'Content-Security-Policy': 'frame-ancestors *'}}" \
+        --NotebookApp.allow_origin='*' &
+
+    echo "Jupyter lab server is running at http://localhost:8889"
+
     echo "Running with Gradio UI..."
+    cd /home/scripts
     gradio run_agent_simple.py
 fi
 
