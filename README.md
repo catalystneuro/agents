@@ -25,9 +25,7 @@ Build and start the container:
 docker compose up --build
 ```
 
-This will:
-- Start the Phoenix telemetry server on http://localhost:6006
-- Start the Gradio UI on http://localhost:7860
+This will start the Gradio UI at http://localhost:7860.
 
 To shut it down, use `CTRL+C` and then:
 ```bash
