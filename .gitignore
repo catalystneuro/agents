@@ -69,4 +69,4 @@ logs/
 *.log
 .gradio/
 
-smolagents/*
+results_**

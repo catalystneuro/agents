@@ -75,7 +75,7 @@ model_list = [
         "litellm_params": {
             "model": "openrouter/anthropic/claude-3.7-sonnet",
             "api_key": os.getenv("OPENROUTER_API_KEY"),
-            "weight": 9,
+            "weight": 20,
         }
     },
     {
