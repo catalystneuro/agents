@@ -73,6 +73,28 @@ You can run multiple parallel agents with the same configuration using the `run_
 
 1. export the necessary environment variables
 2. build the docker image
-3. `python run_batch.py --n 10` (where `n` is the number of agents to run in parallel)
+3. organize the source data in the `data` directory
+4. `python run_batch.py --n 10` (where `n` is the number of agents to run in parallel)
 
-The results will be saved in the `agent_workspace` directory.
+The source data should be organized in the `data` directory as follows:
+```
+data/
+├── <protocol_name>/
+│   ├── <session_name>/
+│   │   ├── <data_file_1>
+│   │   ├── <data_file_2>
+│   │   └── ...
+│   ├── <session_name_2>/
+│   │   ├── <data_file_1>
+│   │   ├── <data_file_2>
+│   │   └── ...
+│   └── ...
+├── <protocol_name_2>/
+│   ├── <session_name>/
+│   │   ├── <data_file_1>
+│   │   ├── <data_file_2>
+│   │   └── ...
+│   ├── ...
+```
+
+The `run_batch.py` script will create a new directory for each agent in the `agent_workspace` directory, and each agent will process the data in its own directory.
