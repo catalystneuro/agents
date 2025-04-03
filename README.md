@@ -55,6 +55,11 @@ docker run \
   catalystneuro_agent
 ```
 
+Stop the container:
+```bash
+docker stop llm-agent
+```
+
 ## Directory Structure
 
 - `/data`: You should put your source data here.
@@ -64,3 +69,12 @@ docker run \
 ## Prompting the CatalystNeuro Agents
 
 Some useful prompt templates can be found in the `scripts/prompts/` directory. Adapt these to your use case.
+
+## Batch testing
+You can run multiple parallel agents with the same configuration using the `run_batch.py` script.
+
+1. export the necessary environment variables
+2. build the docker image
+3. `python run_batch.py --n 10` (where `n` is the number of agents to run in parallel)
+
+The results will be saved in the `agent_workspace` directory.
