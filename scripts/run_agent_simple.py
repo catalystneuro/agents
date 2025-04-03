@@ -23,8 +23,12 @@ from tools.file_system_tools import (
 from tools.cli_tools import ExecuteCommandInTerminalTool
 from tools.memory_bank_tool import MemoryBankTool
 from ui.gradio_ui import GradioUI
+from utils.litellm_router import LiteLLMRouter
 
 
+######################################################
+# Basic setup
+######################################################
 # Telemetry
 if os.getenv("TELEMETRY_ENABLED", "false").lower() == "true":
     from utils.telemetry import set_telemetry
@@ -38,7 +42,9 @@ if not os.getenv("OPENROUTER_API_KEY", None):
     logger.error("OPENROUTER_API_KEY environment variable is not set")
     raise ValueError("Please set the OPENROUTER_API_KEY environment variable.")
 
+######################################################
 # Tools
+######################################################
 logger.info("Initializing tools...")
 working_dir = "/home/agent_workspace"
 
@@ -61,13 +67,75 @@ memory_bank_tool = MemoryBankTool(
     memory_bank_dir_path=f"{working_dir}/memory_bank",
 )
 
+######################################################
 # Prompt templates
+######################################################
 this_dir = os.path.dirname(os.path.abspath(__file__))
 prompt_file = os.path.join(this_dir, "prompts", "code_agent.yaml")
 with open(prompt_file, 'r') as f:
     prompt_templates = yaml.safe_load(f)
 
+######################################################
+# Select model
+######################################################
+model_list = [
+    {
+        "model_name": "all_models",
+        "litellm_params": {
+            "model": "openrouter/anthropic/claude-3.7-sonnet",
+            "api_key": os.getenv("OPENROUTER_API_KEY"),
+            "weight": 20,
+        }
+    },
+    {
+        "model_name": "all_models",
+        "litellm_params": {
+            "model": "openrouter/anthropic/claude-3.7-sonnet",
+            "api_key": os.getenv("OPENROUTER_API_2"),
+            "weight": 1,
+        }
+    },
+    {
+        "model_name": "all_models",
+        "litellm_params": {
+            "model": "openrouter/google/gemini-2.5-pro-exp-03-25:free",
+            "api_key": os.getenv("OPENROUTER_API_KEY"),
+            "weight": 1,
+        }
+    },
+    {
+        "model_name": "all_models",
+        "litellm_params": {
+            "model": "openrouter/google/gemini-2.5-pro-exp-03-25:free",
+            "api_key": os.getenv("OPENROUTER_API_KEY_2"),
+            "weight": 1,
+        }
+    },
+    {
+        "model_name": "all_models",
+        "litellm_params": {
+            "model": "gemini/gemini-2.5-pro-exp-03-25:free",
+            "api_key": os.getenv("GEMINI_API_KEY_1"),
+            "weight": 1,
+        }
+    },
+    {
+        "model_name": "all_models",
+        "litellm_params": {
+            "model": "gemini/gemini-2.5-pro-exp-03-25:free",
+            "api_key": os.getenv("GEMINI_API_KEY_2"),
+            "weight": 1,
+        }
+    },
+]
+model = LiteLLMRouter(model_id="all_models", model_list=model_list, routing_strategy="simple-shuffle")
+# model = LiteLLMModel("openrouter/anthropic/claude-3.7-sonnet")
+# model = LiteLLMModel("openrouter/google/gemini-2.5-pro-exp-03-25:free")
+
+######################################################
 # Agents
+######################################################
+logger.info("Initializing agent...")
 agent = CodeAgent(
     tools=[
         write_to_file_tool,
@@ -84,9 +152,8 @@ agent = CodeAgent(
         DuckDuckGoSearchTool(),
         VisitWebpageTool(),
     ],
-    model=LiteLLMModel("openrouter/anthropic/claude-3.7-sonnet"),
-    # model=LiteLLMModel("openrouter/google/gemini-2.5-pro-exp-03-25:free"),
-    max_steps=50,
+    model=model,
+    max_steps=70,
     planning_interval=2,
     add_base_tools=True,
     prompt_templates=prompt_templates,
