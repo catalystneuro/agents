@@ -43,10 +43,6 @@ Task 4: testing and validation
 
 Tasks 3 and 4 should happen iteratively until all the NWB files are correctly formatted and passing all inspection tests.
 
-Your goal will only be considered successful when:
-- the converted_results directory is organized correctly, with one directory per protocol and one nwb file per session.
-- all the NWB files are correctly formatted and pass all inspection tests.
-
 Example of the source data structure:
 ```
 /home/data
@@ -81,3 +77,8 @@ Example of converted_results structure:
     └── session_4.nwb
 ```
 
+Your goal will only be considered successful when:
+- the converted_results directory is organized correctly, with one directory per protocol and one nwb file per session.
+- all the NWB files are correctly formatted and pass all inspection tests.
+
+Do not give up until you have successfully completed the goal!

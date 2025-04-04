@@ -42,8 +42,11 @@ class LiteLLMRouter(ApiModel):
                 "Please install 'litellm' extra to use LiteLLMModel: `pip install 'smolagents[litellm]'`"
             )
         self.model_id = model_id
+
         self._model_list = model_list
         self.router_config = router_config or {}
+        self.usage_tracking = list()
+
         self.api_base = api_base
         self.api_key = api_key
         self.custom_role_conversions = custom_role_conversions
@@ -93,6 +96,8 @@ class LiteLLMRouter(ApiModel):
         )
 
         response = self.router.completion(**completion_kwargs)
+
+        self.usage_tracking.append(response.usage.to_dict())
 
         self.last_input_token_count = response.usage.prompt_tokens
         self.last_output_token_count = response.usage.completion_tokens

@@ -1,5 +1,6 @@
 import os
 import yaml
+import json
 import argparse
 from smolagents import (
     CodeAgent,
@@ -190,12 +191,17 @@ if __name__ == "__main__":
         args = parse_arguments()
         if args.run_mode == "script":
             logger.info("Running in script mode...")
+
             # request = "Hi, how are you? Tell me a random fact about the universe."
             step_by_step_file = os.path.join(this_dir, "prompts", "step_by_step.md")
             with open(step_by_step_file, 'r') as f:
                 request = f.read()
             response = agent.run(request)
-            logger.info(response)
+            with open(f"{working_dir}/response.log", "w") as f:
+                f.write(str(response))
+
+            with open(f"{working_dir}/usage.json", "w") as f:
+                json.dump(model.usage_tracking, f, indent=4)
         else:
             logger.info("Starting Gradio interface...")
             demo = GradioUI(agent).create_app()
@@ -207,5 +213,5 @@ if __name__ == "__main__":
             )
 
     except Exception as e:
-        logger.error(f"Failed to start Gradio interface: {str(e)}")
+        logger.error(f"An error occurred: {e}")
         raise e

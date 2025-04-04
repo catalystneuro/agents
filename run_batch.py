@@ -5,6 +5,7 @@ import multiprocessing  # noqa: F401 - Used when not in mock mode
 import argparse
 import time
 import datetime
+import json
 from nwbinspector import inspect_nwbfile
 from pathlib import Path
 
@@ -137,6 +138,32 @@ def create_mock_results():
     ]
 
 
+def calculate_token_usage(process_num):
+    """
+    Calculate the total input and output tokens from the usage.json file
+    """
+    usage_file = Path(f"agent_workspace/{process_num}/usage.json")
+    if not usage_file.exists():
+        return 0, 0  # Return zeros if file doesn't exist
+
+    try:
+        with open(usage_file, 'r') as f:
+            usage_data = json.loads(f.read())
+
+        # Sum up all prompt_tokens and completion_tokens
+        prompt_tokens = sum(entry.get('prompt_tokens', 0) for entry in usage_data)
+        completion_tokens = sum(entry.get('completion_tokens', 0) for entry in usage_data)
+
+        # Divide by 1,000
+        prompt_tokens = prompt_tokens / 1000
+        completion_tokens = completion_tokens / 1000
+
+        return prompt_tokens, completion_tokens
+    except Exception as e:
+        print(f"Failed to read usage data for agent {process_num}: {e}")
+        return 0, 0
+
+
 def analyze_results(results):
     """
     Analyze the results after all containers have finished.
@@ -177,8 +204,8 @@ def analyze_results(results):
 
 ## Container Details
 
-| Agent | Status | Duration | Code Files | NWB Files | Critical | BPV | BPS |
-|-------|--------|----------|------------|-----------|----------|-----|-----|
+| Agent | Status | Duration | Code Files | Tokens (In/Out) | NWB Files | Critical | BPV | BPS |
+|-------|--------|----------|------------|-----------------|-----------|----------|-----|-----|
 """
 
     # Analyze outputs from each workspace
@@ -192,7 +219,7 @@ def analyze_results(results):
         if not converted_results_dir.exists():
             nwb_file_count = 0
             missing_files = len(protocol_sessions)
-            nwb_column = f"{nwb_file_count}/{len(protocol_sessions)} ❌ (directory not found)"
+            nwb_column = f"{nwb_file_count}/{len(protocol_sessions)} ❌"
             critical_count = 0
             bpv_count = 0
             bps_count = 0
@@ -219,9 +246,13 @@ def analyze_results(results):
                     bpv_count += inspection_results.get('BEST_PRACTICE_VIOLATION', 0)
                     bps_count += inspection_results.get('BEST_PRACTICE_SUGGESTION', 0)
 
+        # Calculate token usage
+        prompt_tokens, completion_tokens = calculate_token_usage(process_num)
+        token_column = f"{int(prompt_tokens):,}/{int(completion_tokens):,}"
+
         # Add to markdown content
         row = (f"| {process_num} | {status} | {result['execution_time']:.2f} s | "
-               f"{result['files_created']} | {nwb_column} | {critical_count} | {bpv_count} | {bps_count} |\n")
+               f"{result['files_created']} | {token_column} | {nwb_column} | {critical_count} | {bpv_count} | {bps_count} |\n")
         markdown_content += row
 
         # Print to console
@@ -232,6 +263,7 @@ def analyze_results(results):
 
     # Add footnote explaining abbreviations
     markdown_content += "\n\n**Footnote:**\n"
+    markdown_content += "- Tokens (In/Out) - Input tokens/Output tokens used by the agent (in thousands)\n"
     markdown_content += "- BPV - BEST_PRACTICE_VIOLATION\n"
     markdown_content += "- BPS - BEST_PRACTICE_SUGGESTION\n"
 
