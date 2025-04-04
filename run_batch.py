@@ -5,6 +5,7 @@ import multiprocessing  # noqa: F401 - Used when not in mock mode
 import argparse
 import time
 import datetime
+from nwbinspector import inspect_nwbfile
 from pathlib import Path
 
 
@@ -17,6 +18,25 @@ def count_files_in_directory(directory):
         if path.is_file():
             count += 1
     return count
+
+
+def inspect_nwb_file(file_path: Path):
+    """
+    Inspect an NWB file and return the results
+    """
+    try:
+        results = list(inspect_nwbfile(nwbfile_path=str(file_path.resolve())))
+        importances = [a.importance.name for a in results]
+        counts = {}
+        for item in importances:
+            if item in counts:
+                counts[item] += 1
+            else:
+                counts[item] = 1
+        return counts
+    except Exception as e:
+        print(f"Failed to inspect NWB file {file_path}: {e}")
+        return None
 
 
 def run_docker_container(process_num):
@@ -157,8 +177,8 @@ def analyze_results(results):
 
 ## Container Details
 
-| Agent | Status | Duration | Code Files | NWB Files |
-|-------|--------|----------|------------|-----------|
+| Agent | Status | Duration | Code Files | NWB Files | Critical | BPV | BPS |
+|-------|--------|----------|------------|-----------|----------|-----|-----|
 """
 
     # Analyze outputs from each workspace
@@ -173,6 +193,9 @@ def analyze_results(results):
             nwb_file_count = 0
             missing_files = len(protocol_sessions)
             nwb_column = f"{nwb_file_count}/{len(protocol_sessions)} ❌ (directory not found)"
+            critical_count = 0
+            bpv_count = 0
+            bps_count = 0
         else:
             nwb_files = list(converted_results_dir.rglob('*.nwb'))
             nwb_file_count = len(nwb_files)
@@ -184,9 +207,21 @@ def analyze_results(results):
             else:
                 nwb_column = f"{nwb_file_count}/{len(protocol_sessions)} ❌"
 
+            # Inspect NWB files for quality metrics
+            critical_count = 0
+            bpv_count = 0
+            bps_count = 0
+
+            for nwb_file in nwb_files:
+                inspection_results = inspect_nwb_file(nwb_file)
+                if inspection_results is not None:
+                    critical_count += inspection_results.get('CRITICAL', 0)
+                    bpv_count += inspection_results.get('BEST_PRACTICE_VIOLATION', 0)
+                    bps_count += inspection_results.get('BEST_PRACTICE_SUGGESTION', 0)
+
         # Add to markdown content
         row = (f"| {process_num} | {status} | {result['execution_time']:.2f} s | "
-               f"{result['files_created']} | {nwb_column} |\n")
+               f"{result['files_created']} | {nwb_column} | {critical_count} | {bpv_count} | {bps_count} |\n")
         markdown_content += row
 
         # Print to console
@@ -194,6 +229,11 @@ def analyze_results(results):
         print(f"  - Execution time: {result['execution_time']:.2f} seconds")
         print(f"  - Files created: {result['files_created']}")
         print(f"  - NWB files: {nwb_file_count}/{len(protocol_sessions)} ({missing_files} missing)")
+
+    # Add footnote explaining abbreviations
+    markdown_content += "\n\n**Footnote:**\n"
+    markdown_content += "- BPV - BEST_PRACTICE_VIOLATION\n"
+    markdown_content += "- BPS - BEST_PRACTICE_SUGGESTION\n"
 
     # Write markdown file
     with open(markdown_filename, "w") as f:
@@ -228,20 +268,20 @@ def main():
     # Create and start the processes
     print(f"Starting {args.num_processes} agent containers...")
 
-    # with multiprocessing.Pool(processes=args.num_processes) as pool:
-    #     process_nums = range(1, args.num_processes + 1)
-    #     results = pool.map(run_docker_container, process_nums)
+    with multiprocessing.Pool(processes=args.num_processes) as pool:
+        process_nums = range(1, args.num_processes + 1)
+        results = pool.map(run_docker_container, process_nums)
 
-    results = create_mock_results()  # For testing purposes
+    # results = create_mock_results()  # For testing purposes
 
     # Analyze the results after all containers have finished
     analyze_results(results)
 
     # Clean up Docker containers
     print("Cleaning up Docker containers...")
-    # for process_num in process_nums:
-    #     container_name = f"llm-agent-{process_num}"
-    #     subprocess.run(["docker", "rm", "-f", container_name], capture_output=True)
+    for process_num in process_nums:
+        container_name = f"llm-agent-{process_num}"
+        subprocess.run(["docker", "rm", "-f", container_name], capture_output=True)
 
     return 0
 
