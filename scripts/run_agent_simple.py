@@ -107,7 +107,7 @@ model_list = [
     {
         "model_name": "gemini_2",
         "litellm_params": {
-            "model": "gemini/gemini-2.5-pro-exp-03-25:free",
+            "model": "openrouter/gemini/gemini-2.5-pro-exp-03-25:free",
             "api_key": os.getenv("OPENROUTER_API_KEY_2"),
             "weight": 1,
         }
