@@ -80,7 +80,7 @@ with open(prompt_file, 'r') as f:
 ######################################################
 model_list = [
     {
-        "model_name": "all_models",
+        "model_name": "model_1",
         "litellm_params": {
             "model": "openrouter/anthropic/claude-3.7-sonnet",
             "api_key": os.getenv("OPENROUTER_API_KEY"),
@@ -88,15 +88,15 @@ model_list = [
         }
     },
     {
-        "model_name": "all_models",
+        "model_name": "model_2",
         "litellm_params": {
             "model": "openrouter/anthropic/claude-3.7-sonnet",
-            "api_key": os.getenv("OPENROUTER_API_2"),
+            "api_key": os.getenv("OPENROUTER_API_KEY_2"),
             "weight": 1,
         }
     },
     {
-        "model_name": "all_models",
+        "model_name": "gemini_1",
         "litellm_params": {
             "model": "openrouter/google/gemini-2.5-pro-exp-03-25:free",
             "api_key": os.getenv("OPENROUTER_API_KEY"),
@@ -104,32 +104,51 @@ model_list = [
         }
     },
     {
-        "model_name": "all_models",
+        "model_name": "gemini_2",
         "litellm_params": {
-            "model": "openrouter/google/gemini-2.5-pro-exp-03-25:free",
+            "model": "gemini/gemini-2.5-pro-exp-03-25:free",
             "api_key": os.getenv("OPENROUTER_API_KEY_2"),
             "weight": 1,
         }
     },
-    {
-        "model_name": "all_models",
-        "litellm_params": {
-            "model": "gemini/gemini-2.5-pro-exp-03-25:free",
-            "api_key": os.getenv("GEMINI_API_KEY_1"),
-            "weight": 1,
-        }
-    },
-    {
-        "model_name": "all_models",
-        "litellm_params": {
-            "model": "gemini/gemini-2.5-pro-exp-03-25:free",
-            "api_key": os.getenv("GEMINI_API_KEY_2"),
-            "weight": 1,
-        }
-    },
+    # {
+    #     "model_name": "all_models",
+    #     "litellm_params": {
+    #         "model": "openrouter/google/gemini-2.5-pro-exp-03-25:free",
+    #         "api_key": os.getenv("OPENROUTER_API_KEY_2"),
+    #         "weight": 1,
+    #     }
+    # },
+    # {
+    #     "model_name": "all_models",
+    #     "litellm_params": {
+    #         "model": "gemini/gemini-2.5-pro-exp-03-25:free",
+    #         "api_key": os.getenv("GEMINI_API_KEY_1"),
+    #         "weight": 1,
+    #     }
+    # },
+    # {
+    #     "model_name": "all_models",
+    #     "litellm_params": {
+    #         "model": "gemini/gemini-2.5-pro-exp-03-25:free",
+    #         "api_key": os.getenv("GEMINI_API_KEY_2"),
+    #         "weight": 1,
+    #     }
+    # },
 ]
-# model = LiteLLMRouter(model_id="all_models", model_list=model_list, routing_strategy="simple-shuffle")
-model = LiteLLMModel("openrouter/anthropic/claude-3.7-sonnet")
+router_config = {
+    # "routing_strategy": "simple-shuffle",
+    "num_retries": 3,
+    "retry_after": 30,
+    "fallbacks": [
+        {"model_1": ["model_2"]},
+        {"model_2": ["gemini_1"]},
+        {"gemini_1": ["gemini_2"]},
+        {"gemini_2": ["model_1"]},
+    ],
+}
+model = LiteLLMRouter(model_id="model_1", model_list=model_list, router_config=router_config)
+# model = LiteLLMModel("openrouter/anthropic/claude-3.7-sonnet")
 # model = LiteLLMModel("openrouter/google/gemini-2.5-pro-exp-03-25:free")
 
 ######################################################

@@ -28,6 +28,7 @@ class LiteLLMRouter(ApiModel):
         self,
         model_id: str,
         model_list: List[Dict[Any, Any]],
+        router_config: Optional[Dict[str, Any]] = None,
         api_base=None,
         api_key=None,
         custom_role_conversions: Optional[Dict[str, str]] = None,
@@ -42,6 +43,7 @@ class LiteLLMRouter(ApiModel):
             )
         self.model_id = model_id
         self._model_list = model_list
+        self.router_config = router_config or {}
         self.api_base = api_base
         self.api_key = api_key
         self.custom_role_conversions = custom_role_conversions
@@ -66,9 +68,7 @@ class LiteLLMRouter(ApiModel):
             )
         self.router = Router(
             model_list=self._model_list,
-            routing_strategy="simple-shuffle",
-            num_retries=3,
-            retry_after=10,
+            **self.router_config,
         )
 
     def __call__(

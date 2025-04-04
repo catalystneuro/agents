@@ -15,6 +15,7 @@ Task 1: investigate the source data
 - Each folder inside "/home/data" corresponds to a single experimental protocol.
 - Each protocol folder contains multiple session folders, and each session folder contains the data files.
 - Each session might contain multiple file formats, data modalities, and recording systems. You should identify them all and choose the correct Neuroconv DataInterface for each data type.
+- Make sure you diligently map all the experimental data types.
 - You should also check the metadata.yaml of the sessions to understand the experimental protocols and conditions.
 
 Task 2: creating a conversion project
@@ -42,26 +43,30 @@ Task 4: testing and validation
 
 Tasks 3 and 4 should happen iteratively until all the NWB files are correctly formatted and passing all inspection tests.
 
+Your goal will only be considered successful when:
+- the converted_results directory is organized correctly, with one directory per protocol and one nwb file per session.
+- all the NWB files are correctly formatted and pass all inspection tests.
+
 Example of the source data structure:
 ```
 /home/data
 ├── protocol_1
 │   ├── session_1
-│   │   ├── data_file_1.csv
-│   │   ├── data_file_2.h5
+│   │   ├── data_file_1
+│   │   ├── data_file_2
 │   │   └── metadata.yaml
 │   ├── session_2
-│   │   ├── data_file_3.csv
-│   │   ├── data_file_4.h5
+│   │   ├── data_file_3
+│   │   ├── data_file_4
 │   │   └── metadata.yaml
 └── protocol_2
     ├── session_3
-    │   ├── data_file_5.csv
-    │   ├── data_file_6.h5
+    │   ├── data_file_5
+    │   ├── data_file_6
     │   └── metadata.yaml
     ├── session_4
-        ├── data_file_7.csv
-        ├── data_file_8.h5
+        ├── data_file_7
+        ├── data_file_8
         └── metadata.yaml
 ```
 
