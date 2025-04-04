@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import subprocess
-import multiprocessing
+import multiprocessing  # noqa: F401 - Used when not in mock mode
 import argparse
 import time
 import datetime
@@ -81,9 +81,45 @@ def run_docker_container(process_num):
     }
 
 
-def process_results(results):
+def create_mock_results():
     """
-    Process the results after all containers have finished
+    Create mock results for testing the analyze_results function
+    """
+    return [
+        {
+            "process_num": 1,
+            "success": True,
+            "exit_code": 0,
+            "execution_time": 120.5,
+            "files_created": 15
+        },
+        {
+            "process_num": 2,
+            "success": True,
+            "exit_code": 0,
+            "execution_time": 145.2,
+            "files_created": 12
+        },
+        {
+            "process_num": 3,
+            "success": False,
+            "exit_code": 1,
+            "execution_time": 60.3,
+            "files_created": 3
+        },
+        {
+            "process_num": 4,
+            "success": True,
+            "exit_code": 0,
+            "execution_time": 130.8,
+            "files_created": 14
+        }
+    ]
+
+
+def analyze_results(results):
+    """
+    Analyze the results after all containers have finished.
     """
     # Count successful runs
     successful = sum(1 for r in results if r["success"])
@@ -93,6 +129,20 @@ def process_results(results):
     print(f"Summary: {successful} of {total} containers completed successfully")
     print("\nPerforming results analysis...")
 
+    # Find all protocol/session combinations
+    protocol_sessions = []
+    data_dir = Path("data")
+    print("\nAnalyzing protocol/session combinations...")
+
+    for protocol_dir in data_dir.iterdir():
+        if protocol_dir.is_dir():
+            protocol_name = protocol_dir.name
+            for session_dir in protocol_dir.iterdir():
+                if session_dir.is_dir():
+                    session_name = session_dir.name
+                    protocol_sessions.append((protocol_name, session_name))
+                    print(f"  - Found protocol/session: {protocol_name}/{session_name}")
+
     # Create markdown content
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     markdown_filename = f"results_{timestamp}.md"
@@ -100,27 +150,50 @@ def process_results(results):
     markdown_content = f"""# Container Execution Results
 
 **Date:** {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+
 **Summary:** {successful} of {total} containers completed successfully
+
+**Total protocol/session combinations:** {len(protocol_sessions)}
 
 ## Container Details
 
-| Container | Status | Execution Time | Files Created |
-|-----------|--------|----------------|---------------|
+| Agent | Status | Duration | Code Files | NWB Files |
+|-------|--------|----------|------------|-----------|
 """
 
     # Analyze outputs from each workspace
     for result in results:
         process_num = result["process_num"]
         workspace_dir = f"agent_workspace/{process_num}"
-        status = "✅ Success" if result["success"] else f"❌ Failed (Exit code: {result['exit_code']})"
+        status = "✅ Success" if result["success"] else "❌ Failed"
+
+        # Check NWB files
+        converted_results_dir = Path(f"agent_workspace/{process_num}/converted_results")
+        if not converted_results_dir.exists():
+            nwb_file_count = 0
+            missing_files = len(protocol_sessions)
+            nwb_column = f"{nwb_file_count}/{len(protocol_sessions)} ❌ (directory not found)"
+        else:
+            nwb_files = list(converted_results_dir.rglob('*.nwb'))
+            nwb_file_count = len(nwb_files)
+            expected_nwb_files = len(protocol_sessions)
+            missing_files = expected_nwb_files - nwb_file_count
+
+            if missing_files == 0:
+                nwb_column = f"{nwb_file_count}/{len(protocol_sessions)} ✅"
+            else:
+                nwb_column = f"{nwb_file_count}/{len(protocol_sessions)} ❌"
 
         # Add to markdown content
-        markdown_content += f"| {workspace_dir} | {status} | {result['execution_time']:.2f} seconds | {result['files_created']} |\n"
+        row = (f"| {process_num} | {status} | {result['execution_time']:.2f} s | "
+               f"{result['files_created']} | {nwb_column} |\n")
+        markdown_content += row
 
-        # Print to console (preserving original functionality)
+        # Print to console
         print(f"Processing results from workspace {workspace_dir}...")
         print(f"  - Execution time: {result['execution_time']:.2f} seconds")
         print(f"  - Files created: {result['files_created']}")
+        print(f"  - NWB files: {nwb_file_count}/{len(protocol_sessions)} ({missing_files} missing)")
 
     # Write markdown file
     with open(markdown_filename, "w") as f:
@@ -155,18 +228,20 @@ def main():
     # Create and start the processes
     print(f"Starting {args.num_processes} agent containers...")
 
-    with multiprocessing.Pool(processes=args.num_processes) as pool:
-        process_nums = range(1, args.num_processes + 1)
-        results = pool.map(run_docker_container, process_nums)
+    # with multiprocessing.Pool(processes=args.num_processes) as pool:
+    #     process_nums = range(1, args.num_processes + 1)
+    #     results = pool.map(run_docker_container, process_nums)
 
-    # Process the results after all containers have finished
-    process_results(results)
+    results = create_mock_results()  # For testing purposes
+
+    # Analyze the results after all containers have finished
+    analyze_results(results)
 
     # Clean up Docker containers
     print("Cleaning up Docker containers...")
-    for process_num in process_nums:
-        container_name = f"llm-agent-{process_num}"
-        subprocess.run(["docker", "rm", "-f", container_name], capture_output=True)
+    # for process_num in process_nums:
+    #     container_name = f"llm-agent-{process_num}"
+    #     subprocess.run(["docker", "rm", "-f", container_name], capture_output=True)
 
     return 0
 
