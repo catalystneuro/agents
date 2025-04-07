@@ -50,12 +50,20 @@ class NWBInspectorTool(Tool):
             # Validate output directory
             work_dir = self._validate_read_dir(nwb_dir_path)
 
+            nwb_files = list(Path(nwb_dir_path).glob("*.nwb"))
+            if not nwb_files:
+                return f"No NWB files found in the directory: {nwb_dir_path}. Maybe you need to run the conversion script first?"
+
             results = dict()
             for p in Path(work_dir).glob("*.nwb"):
                 results[p.name] = list(inspect_nwbfile(nwbfile_path=str(p.resolve())))
 
             logger.info(f"Inspection results: {results}")
-            return str(results)
+            if len(results) == 0:
+                return "No issues found in the inspected NWB files. Congratulations!"
+            else:
+                logger.warning(f"Inspection found the following issues: {results}")
+                return f"Inspection results: {results}"
         except Exception as e:
             logger.error(f"Failed to inspect NWB files: {str(e)}")
             return f"Failed to inspect NWB files: {str(e)}"

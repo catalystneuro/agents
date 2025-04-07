@@ -81,45 +81,53 @@ with open(prompt_file, 'r') as f:
 ######################################################
 model_list = [
     {
-        "model_name": "claude_1",
+        "model_name": "quasar_1",
         "litellm_params": {
-            "model": "openrouter/anthropic/claude-3.7-sonnet",
+            "model": "openrouter/openrouter/quasar-alpha",
             "api_key": os.getenv("OPENROUTER_API_KEY"),
             "weight": 20,
         }
     },
-    {
-        "model_name": "o3_mini",
-        "litellm_params": {
-            "model": "openrouter/openai/o3-mini-high",
-            "api_key": os.getenv("OPENROUTER_API_KEY"),
-            "weight": 1,
-        }
-    },
-    {
-        "model_name": "claude_2",
-        "litellm_params": {
-            "model": "openrouter/anthropic/claude-3.7-sonnet",
-            "api_key": os.getenv("OPENROUTER_API_KEY_2"),
-            "weight": 1,
-        }
-    },
-    {
-        "model_name": "gemini_1",
-        "litellm_params": {
-            "model": "openrouter/google/gemini-2.5-pro-exp-03-25:free",
-            "api_key": os.getenv("OPENROUTER_API_KEY"),
-            "weight": 1,
-        }
-    },
-    {
-        "model_name": "gemini_2",
-        "litellm_params": {
-            "model": "openrouter/gemini/gemini-2.5-pro-exp-03-25:free",
-            "api_key": os.getenv("OPENROUTER_API_KEY_2"),
-            "weight": 1,
-        }
-    },
+    # {
+    #     "model_name": "claude_1",
+    #     "litellm_params": {
+    #         "model": "openrouter/anthropic/claude-3.7-sonnet",
+    #         "api_key": os.getenv("OPENROUTER_API_KEY"),
+    #         "weight": 20,
+    #     }
+    # },
+    # {
+    #     "model_name": "o3_mini",
+    #     "litellm_params": {
+    #         "model": "openrouter/openai/o3-mini-high",
+    #         "api_key": os.getenv("OPENROUTER_API_KEY"),
+    #         "weight": 1,
+    #     }
+    # },
+    # {
+    #     "model_name": "claude_2",
+    #     "litellm_params": {
+    #         "model": "openrouter/anthropic/claude-3.7-sonnet",
+    #         "api_key": os.getenv("OPENROUTER_API_KEY_2"),
+    #         "weight": 1,
+    #     }
+    # },
+    # {
+    #     "model_name": "gemini_1",
+    #     "litellm_params": {
+    #         "model": "openrouter/google/gemini-2.5-pro-exp-03-25:free",
+    #         "api_key": os.getenv("OPENROUTER_API_KEY"),
+    #         "weight": 1,
+    #     }
+    # },
+    # {
+    #     "model_name": "gemini_2",
+    #     "litellm_params": {
+    #         "model": "openrouter/gemini/gemini-2.5-pro-exp-03-25:free",
+    #         "api_key": os.getenv("OPENROUTER_API_KEY_2"),
+    #         "weight": 1,
+    #     }
+    # },
     # {
     #     "model_name": "all_models",
     #     "litellm_params": {
@@ -149,14 +157,14 @@ router_config = {
     # "routing_strategy": "simple-shuffle",
     "num_retries": 3,
     "retry_after": 30,
-    "fallbacks": [
-        {"claude_1": ["claude_2"]},
-        {"claude_2": ["o3_mini"]},
-        {"o3_mini": ["gemini_1"]},
-        {"gemini_1": ["claude_1"]},
-    ],
+    # "fallbacks": [
+    #     {"claude_1": ["claude_2"]},
+    #     {"claude_2": ["o3_mini"]},
+    #     {"o3_mini": ["gemini_1"]},
+    #     {"gemini_1": ["claude_1"]},
+    # ],
 }
-model = LiteLLMRouter(model_id="claude_1", model_list=model_list, router_config=router_config)
+model = LiteLLMRouter(model_id="quasar_1", model_list=model_list, router_config=router_config)
 # model = LiteLLMModel("openrouter/anthropic/claude-3.7-sonnet")
 # model = LiteLLMModel("openrouter/google/gemini-2.5-pro-exp-03-25:free")
 

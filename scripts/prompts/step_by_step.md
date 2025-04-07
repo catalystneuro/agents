@@ -9,6 +9,7 @@ General instructions:
 - You should only create files inside the "/home/agent_workspace" directory.
 - The source data is located in the "/home/data" directory.
 - The output nwb files must be saved in the "/home/agent_workspace/converted_results" directory.
+- Use your memory bank to keep track on the progress of the tasks.
 
 Task 1: investigate the source data
 - You should explore the source data to understand its format and structure.
@@ -42,6 +43,7 @@ Task 4: testing and validation
 - Finish the task when all NWB files were tested.
 
 Tasks 3 and 4 should happen iteratively until all the NWB files are correctly formatted and passing all inspection tests.
+Iterate between conversion and validation as many times as necessary. Do NOT declare success prematurely.
 
 Example of the source data structure:
 ```
@@ -79,6 +81,8 @@ Example of converted_results structure:
 
 Your goal will only be considered successful when:
 - the converted_results directory is organized correctly, with one directory per protocol and one nwb file per session.
+- the nwb files are created and saved in the converted_results directory.
 - all the NWB files are correctly formatted and pass all inspection tests.
+- only stop when all criteria are fully met.
 
 Do not give up until you have successfully completed the goal!
