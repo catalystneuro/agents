@@ -1,12 +1,21 @@
-# LLM Agents for NWB conversion
+# LLM Agents for Neuroscience data standardization and analysis
 
-LLM agents for NWB conversion is a project that utilizes large language models (LLMs) to assist in the conversion of neurophysiology data into the Neurodata Without Borders (NWB) format. The project is designed to be flexible and extensible, allowing users to adapt the agents to their specific needs.
+This project that utilizes large language models (LLMs) to automate:
+- the parsing and understanding of neuroscience experimental data
+- the conversion of neurophysiology data into the Neurodata Without Borders (NWB) format
+- the reproduction of key results from published papers associated with the dataset
+- the generation of hypothesis‑driven discoveries
+
+The project is designed to be flexible and extensible, allowing users to adapt the agents to their specific needs.
 
 The agents run in a Docker environment, guaranteeing isolation, reproducibility and ease of deployment.
 
 - Agents are written in Python using the [smolagents](https://github.com/huggingface/smolagents)
 - NWB conversion is done with [NeuroConv](https://github.com/catalystneuro/neuroconv) and [PyNWB](https://github.com/NeurodataWithoutBorders/pynwb)
 - Results validation is done with [nwbinspector](https://github.com/NeurodataWithoutBorders/nwbinspector)
+
+TODO:
+- multimodal models read and interpret images from published papers
 
 ## Setup
 
