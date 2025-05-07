@@ -286,7 +286,7 @@ def main():
     args = parser.parse_args()
 
     # Check if required environment variables are set
-    required_vars = ['OPENROUTER_API_KEY', 'OPENAI_API_KEY']
+    required_vars = ["OPENROUTER_API_KEY", "OPENAI_API_KEY", "QDRANT_API_KEY",]
     missing_vars = [var for var in required_vars if not os.environ.get(var)]
 
     if missing_vars:
