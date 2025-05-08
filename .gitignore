@@ -61,6 +61,7 @@ coverage.xml
 .pytest_cache/
 cover/
 
+.ipynb_checkpoints
 
 # Project specific
 data/*

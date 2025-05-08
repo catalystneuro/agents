@@ -19,28 +19,28 @@ Task 1: investigate the source data
 - Make sure you diligently map all the experimental data types.
 - You should also check the metadata.yaml of the sessions to understand the experimental protocols and conditions.
 
-Task 2: creating a conversion project
+Task 2: create a conversion project
 - You will be using the Neuroconv framework to convert the provided dataset into the NWB format.
 - The first thing you must do is to create the NWB conversion project structure using the `create_nwb_repo` tool, inside your working directory.
 - Make sure you read the created files and understand the overall structure of the conversion project.
 - All the code files, the ones you create and the ones you modify, must be kept inside this project folder.
 
-Task 3: writing the data conversion code
+Task 3: write the data conversion code
 - You should edit the files within the project folder to successfully convert the source data into the NWB format.
 - The conversion should be done using Neuroconv. Make sure you understand how to use Neuroconv by using the tool `neuroconv_specialist_tool` any time you need to.
-- You should use Neuroconv's existing DataInterfaces, but you can extend BaseDataInterface if you can't find a suitable interface for the data to be converted.
+- You should use Neuroconv's existing DataInterfaces whenever possible, but you can extend BaseDataInterface if you can't find a suitable interface for the data to be converted.
 - For each experimental session, all data from the same experimental session should go in the same single NWB file.
 - Ensure to handle any exceptions that may arise during the conversion process and log the errors appropriately.
 - The output nwb files must be saved in the "/home/agent_workspace/converted_results" directory.
 - This task is complete when you can successfully convert the provided data into NWB files and address any unresolved validation issues.
 
-Task 4: testing and validation
+Task 4: test and validate
 - The goal of this task is to check and validate the NWB files that were converted in Task 3.
 - Use the `inspect_nwb_files` tool to validate the NWB files. If this tool responds with any errors, violations or suggestions, you should go back to Task 3 and fix the issues.
 - Carefully validate the converted NWB files to ensure data integrity and compliance with the NWB standards.
 - Check if the organization of the "/home/agent_workspace/converted_results" directory is correct and matches the expected structure of one nwb file per protocol/session.
 - Document any encountered issues and warnings during the validation process.
-- Finish the task when all NWB files were tested.
+- Finish the task when all NWB files are tested.
 
 Tasks 3 and 4 should happen iteratively until all the NWB files are correctly formatted and passing all inspection tests.
 Iterate between conversion and validation as many times as necessary. Do NOT declare success prematurely.

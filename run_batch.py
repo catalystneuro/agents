@@ -93,13 +93,20 @@ def run_docker_container(process_num):
     final_file_count = count_files_in_directory(workspace_dir)
     files_created = final_file_count - initial_file_count
 
-    return {
+    # Save results to a JSON file
+    returned_results = {
         "process_num": process_num,
         "success": exit_code == 0,
         "exit_code": exit_code,
         "execution_time": execution_time,
         "files_created": files_created
     }
+    results_file = workspace_dir / "results.json"
+    with open(results_file, 'w') as f:
+        json.dump(returned_results, f, indent=4)
+    print(f"Results for container {container_name} saved to {results_file}")
+
+    return returned_results
 
 
 def create_mock_results():
@@ -251,7 +258,9 @@ def analyze_results(results):
         token_column = f"{int(prompt_tokens):,}/{int(completion_tokens):,}"
 
         # Add to markdown content
-        row = (f"| {process_num} | {status} | {result['execution_time']:.2f} s | "
+        secs = round(result['execution_time'])
+        duration_str = f"{secs:,}" + " s"
+        row = (f"| {process_num} | {status} | {duration_str} | "
                f"{result['files_created']} | {token_column} | {nwb_column} | {critical_count} | {bpv_count} | {bps_count} |\n")
         markdown_content += row
 
@@ -300,9 +309,21 @@ def main():
     # Create and start the processes
     print(f"Starting {args.num_processes} agent containers...")
 
+    process_nums = range(1, args.num_processes + 1)
     with multiprocessing.Pool(processes=args.num_processes) as pool:
-        process_nums = range(1, args.num_processes + 1)
-        results = pool.map(run_docker_container, process_nums)
+        _ = pool.map(run_docker_container, process_nums)
+
+    # Read results list from each workspace
+    results = []
+    for process_num in process_nums:
+        workspace_dir = Path(f"agent_workspace/{process_num}")
+        results_file = workspace_dir / "results.json"
+        if results_file.exists():
+            with open(results_file, 'r') as f:
+                result = json.load(f)
+                results.append(result)
+        else:
+            print(f"Results file not found for process {process_num}, skipping...")
 
     # results = create_mock_results()  # For testing purposes
 

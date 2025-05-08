@@ -79,50 +79,69 @@ with open(prompt_file, 'r') as f:
 # Select model
 ######################################################
 model_list = [
-    {
-        "model_name": "o4-mini",
-        "litellm_params": {
-            "model": "openrouter/openai/o4-mini",
-            "api_key": os.getenv("OPENROUTER_API_KEY"),
-            "weight": 1,
-        }
-    },
-    {
-        "model_name": "qwen",
-        "litellm_params": {
-            "model": "openrouter/qwen/qwen3-235b-a22b",
-            "api_key": os.getenv("OPENROUTER_API_KEY"),
-            "weight": 1,
-        }
-    },
     # {
-    #     "model_name": "o3_mini",
+    #     "model_name": "o4-mini-high",
     #     "litellm_params": {
-    #         "model": "openrouter/openai/o3-mini-high",
+    #         "model": "openrouter/openai/o4-mini-high",
     #         "api_key": os.getenv("OPENROUTER_API_KEY"),
     #         "weight": 1,
     #     }
     # },
     # {
-    #     "model_name": "claude_1",
+    #     "model_name": "o4-mini",
     #     "litellm_params": {
-    #         "model": "openrouter/anthropic/claude-3.7-sonnet",
+    #         "model": "openrouter/openai/o4-mini",
+    #         "api_key": os.getenv("OPENROUTER_API_KEY"),
+    #         "weight": 1,
+    #     }
+    # },
+    # {
+    #     "model_name": "gpt-41",
+    #     "litellm_params": {
+    #         "model": "openrouter/openai/gpt-4.1",
+    #         "api_key": os.getenv("OPENROUTER_API_KEY"),
+    #         "weight": 1,
+    #     }
+    # },
+    {
+        "model_name": "claude-37",
+        "litellm_params": {
+            "model": "openrouter/anthropic/claude-3.7-sonnet",
+            "api_key": os.getenv("OPENROUTER_API_KEY"),
+            "weight": 1,
+        }
+    },
+    # {
+    #     "model_name": "qwen",
+    #     "litellm_params": {
+    #         "model": "openrouter/qwen/qwen3-235b-a22b",
+    #         "api_key": os.getenv("OPENROUTER_API_KEY"),
+    #         "weight": 1,
+    #     }
+    # },
+    # {
+    #     "model_name": "gemini",
+    #     "litellm_params": {
+    #         "model": "openrouter/google/gemini-2.5-pro-preview",
     #         "api_key": os.getenv("OPENROUTER_API_KEY"),
     #         "weight": 1,
     #     }
     # },
 ]
+
 router_config = {
     # "routing_strategy": "simple-shuffle",
     "num_retries": 3,
     "retry_after": 30,
-    "fallbacks": [
-        {"o4-mini": ["qwen"]},
-        {"qwen": ["o4-mini"]},
-    ],
+    # "fallbacks": [
+    #     {"o4-mini-high": ["04-mini"]},
+    #     {"o4-mini": ["qwen"]},
+    #     {"qwen": ["o4-mini-high"]},
+    # ],
 }
+
 model = LiteLLMRouter(
-    model_id="o4-mini",
+    model_id=model_list[0]["model_name"],
     model_list=model_list,
     router_config=router_config,
 )
@@ -155,13 +174,15 @@ agent = CodeAgent(
 )
 
 
-def parse_arguments():
-    parser = argparse.ArgumentParser(description='Run the agent in different modes')
-    parser.add_argument('--run-mode', type=str, help='Mode to run the agent (e.g., "script")')
-    return parser.parse_args()
-
-
+######################################################
+# Main function - script entry point
+######################################################
 if __name__ == "__main__":
+    def parse_arguments():
+        parser = argparse.ArgumentParser(description='Run the agent in different modes')
+        parser.add_argument('--run-mode', type=str, help='Mode to run the agent (e.g., "script")')
+        return parser.parse_args()
+
     try:
         args = parse_arguments()
         if args.run_mode == "script":
