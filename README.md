@@ -83,7 +83,7 @@ docker stop llm-agent
 
 Some useful prompt templates can be found in the `scripts/prompts/` directory. Adapt these to your use case.
 
-## Batch testing
+## Batch run
 You can run multiple parallel agents with the same configuration using the `run_batch.py` script.
 
 1. export the necessary environment variables
