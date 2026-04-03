@@ -4,7 +4,7 @@ nwbinspector==0.6.3
 dandi==0.67.2
 smolagents[gradio,litellm,mcp,openai,telemetry]==1.14.0
 instructor==1.7.7
-litellm==1.65.0
+litellm==1.83.0
 qdrant-client==1.13.3
 directory-tree==1.0.0
 cookiecutter==2.6.0
